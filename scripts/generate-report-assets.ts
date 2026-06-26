@@ -113,17 +113,25 @@ function scatterSvg(opts: {
   yLabel: string;
   yMin?: number;
   yMax?: number;
+  /** Extra X-axis span on the cheap (right) side so edge labels are not clipped */
+  xPadRight?: number;
+  xPadLeft?: number;
   width?: number;
   height?: number;
 }): string {
   const W = opts.width ?? CHART_WIDTH;
   const H = opts.height ?? 500;
-  const pad = { l: 72, r: 32, t: 48, b: 56 };
+  const pad = { l: 72, r: 72, t: 48, b: 56 };
   const plotW = W - pad.l - pad.r;
   const plotH = H - pad.t - pad.b;
-  const minX = Math.min(...opts.points.map((p) => p.x));
-  const maxX = Math.max(...opts.points.map((p) => p.x));
-  const xSpan = maxX - minX || 1;
+  const dataMinX = Math.min(...opts.points.map((p) => p.x));
+  const dataMaxX = Math.max(...opts.points.map((p) => p.x));
+  const dataSpan = dataMaxX - dataMinX || 1;
+  const xPadLeft = opts.xPadLeft ?? 0.06;
+  const xPadRight = opts.xPadRight ?? 0.2;
+  const displayMinX = dataMinX - dataSpan * xPadLeft;
+  const displayMaxX = dataMaxX + dataSpan * xPadRight;
+  const displaySpan = displayMaxX - displayMinX || 1;
   const minY = opts.yMin ?? 0;
   const maxY = opts.yMax ?? 100;
   const ySpan = maxY - minY || 1;
@@ -140,12 +148,16 @@ function scatterSvg(opts: {
 
   const dots = opts.points
     .map((p) => {
-      const cx = pad.l + ((p.x - minX) / xSpan) * plotW;
+      const cx = pad.l + ((p.x - displayMinX) / displaySpan) * plotW;
       const yClamped = Math.min(maxY, Math.max(minY, p.y));
       const cy = pad.t + plotH - ((yClamped - minY) / ySpan) * plotH;
+      const nearRight = cx > pad.l + plotW * 0.78;
+      const nearLeft = cx < pad.l + plotW * 0.12;
+      const labelX = nearRight ? cx - 14 : nearLeft ? cx + 14 : cx + 12;
+      const anchor = nearRight ? "end" : "start";
       return `
     <circle cx="${cx}" cy="${cy}" r="9" fill="${p.color}" opacity="0.85"/>
-    <text x="${cx + 12}" y="${cy + 5}" class="dot-label">${escapeXml(shortName(p.label))}</text>`;
+    <text x="${labelX}" y="${cy + 5}" text-anchor="${anchor}" class="dot-label">${escapeXml(shortName(p.label))}</text>`;
     })
     .join("");
 

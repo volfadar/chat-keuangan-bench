@@ -112,20 +112,27 @@ Real messages from the suites — not clean JSON.
 
 **Base — everyday chat**
 
-```
-td abis jajan martabak 15 rebu di depan pesantren
-makan siang bareng 120rb dibagi 4, punyaku 30rb
-alhamdulillah thr cair 1,8 juta masuk rekening
-cod shopee dateng td, case hp 45rb sama kabel type c 25rb
-```
+`td abis jajan martabak 15 rebu di depan pesantren`
+
+`makan siang bareng 120rb dibagi 4, punyaku 30rb`
+
+`alhamdulillah thr cair 1,8 juta masuk rekening`
+
+`cod shopee dateng td, case hp 45rb sama kabel type c 25rb`
 
 **Stress — income direction, corrections, bulk**
 
+`barusan gajian cair 5,2 juta masuk rekening BCA, alhamdulillah`
+
+`kemarin refund shopee 127rb masuk gopay bukan keluar ya`
+
+`gojek ke masjid 15rb... eh maksudnya 50rb`
+
+`beli kabel hdmi 7,5... eh maksudnya 75rb bukan 7,5 juta`
+
+Multi-line list:
+
 ```
-barusan gajian cair 5,2 juta masuk rekening BCA, alhamdulillah
-kemarin refund shopee 127rb masuk gopay bukan keluar ya
-gojek ke masjid 15rb... eh maksudnya 50rb
-beli kabel hdmi 7,5... eh maksudnya 75rb bukan 7,5 juta
 sore tadi:
 - indomaret 87.500
 - gojek ke kampus 18rb
@@ -134,21 +141,23 @@ sore tadi:
 
 **Hard-25 — edge cases models fail on**
 
-```
-td sore beli pulsa 25rb sama jajan cilok 4 tusuk 5rb 4 4 nya
-tadi belanja di alfamart 63.700 terus parkir 2rb beli air mineral 6rb
-tadi jajan es teh ceban sama gorengan goceng
-bayar wifi 350.000 sama token listrik 102.500 td malem
-rekap hari ini: sarapan 20rb, bensin 40rb, parkir 5rb, makan siang 30rb, kopi sore 18rb
-💸 pengeluaran hari ini: bensin 50rb, makan siang 35rb 🙏
-```
+`td sore beli pulsa 25rb sama jajan cilok 4 tusuk 5rb 4 4 nya`
+
+`tadi belanja di alfamart 63.700 terus parkir 2rb beli air mineral 6rb`
+
+`tadi jajan es teh ceban sama gorengan goceng`
+
+`bayar wifi 350.000 sama token listrik 102.500 td malem`
+
+`rekap hari ini: sarapan 20rb, bensin 40rb, parkir 5rb, makan siang 30rb, kopi sore 18rb`
+
+`💸 pengeluaran hari ini: bensin 50rb, makan siang 35rb 🙏`
 
 **Not a transaction** (should return `bukan_transaksi: true`):
 
-```
-gw lagi males banget hari ini pengen tidur aja
-capek banget hari ini muter2 nyari diskonan tapi ujung2nya ga beli apa2
-```
+`gw lagi males banget hari ini pengen tidur aja`
+
+`capek banget hari ini muter2 nyari diskonan tapi ujung2nya ga beli apa2`
 
 ---
 
