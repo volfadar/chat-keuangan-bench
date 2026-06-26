@@ -5,20 +5,41 @@ Generated from hard-25 eval + OpenRouter activity CSV.
 
 ## Visual summary
 
-### Strict pass rate
-![Strict pass](./charts/strict-pass.svg)
+Charts render at **960px** width — scroll horizontally on narrow screens if needed.
 
-### Cost per full eval (25 scenarios)
-![Cost IDR](./charts/cost-25-idr.svg)
+#### Strict pass rate
+Hard-25 scenarios passed with exact structured match.
 
-### Latency
-![Latency](./charts/latency.svg)
 
-### Quality vs speed
-![Quality vs latency](./charts/quality-vs-latency.svg)
+<p align="center">
+  <img src="./charts/strict-pass.svg" alt="Strict pass rate" width="960" />
+</p>
 
-### Throughput
-![Throughput](./charts/throughput.svg)
+#### Cost per 25-scenario eval run (IDR)
+FX: 1 USD = 17.905 IDR
+
+
+<p align="center">
+  <img src="./charts/cost-25-idr.svg" alt="Cost per 25-scenario eval run (IDR)" width="960" />
+</p>
+
+#### Mean eval latency per scenario
+
+<p align="center">
+  <img src="./charts/latency.svg" alt="Mean eval latency per scenario" width="960" />
+</p>
+
+#### Quality vs speed trade-off
+
+<p align="center">
+  <img src="./charts/quality-vs-latency.svg" alt="Quality vs speed trade-off" width="960" />
+</p>
+
+#### OpenRouter throughput (tokens/sec)
+
+<p align="center">
+  <img src="./charts/throughput.svg" alt="OpenRouter throughput (tokens/sec)" width="960" />
+</p>
 
 ## Master table (USD + IDR)
 

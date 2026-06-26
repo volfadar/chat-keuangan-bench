@@ -57,6 +57,12 @@ function parseArgs(argv: string[]) {
   return { scorecardPath, outDir };
 }
 
+/** Native SVG width — renders large when embedded full-width in README */
+const CHART_WIDTH = 960;
+const BAR_HEIGHT = 36;
+const LABEL_W = 220;
+const VALUE_W = 140;
+
 function barChartSvg(opts: {
   title: string;
   rows: Array<{ label: string; value: number; display: string; color: string }>;
@@ -65,18 +71,18 @@ function barChartSvg(opts: {
   barHeight?: number;
   unit?: string;
 }): string {
-  const width = opts.width ?? 720;
-  const barH = opts.barHeight ?? 28;
-  const gap = 10;
-  const labelW = 200;
-  const valueW = 120;
-  const chartW = width - labelW - valueW - 40;
+  const width = opts.width ?? CHART_WIDTH;
+  const barH = opts.barHeight ?? BAR_HEIGHT;
+  const gap = 12;
+  const labelW = LABEL_W;
+  const valueW = VALUE_W;
+  const chartW = width - labelW - valueW - 48;
   const max = opts.maxValue ?? Math.max(...opts.rows.map((r) => r.value), 1);
-  const height = 48 + opts.rows.length * (barH + gap) + 24;
+  const height = 56 + opts.rows.length * (barH + gap) + 28;
 
   const bars = opts.rows
     .map((r, i) => {
-      const y = 40 + i * (barH + gap);
+      const y = 52 + i * (barH + gap);
       const w = Math.max(4, (r.value / max) * chartW);
       return `
     <text x="8" y="${y + barH * 0.72}" class="label">${escapeXml(r.label)}</text>
@@ -88,14 +94,14 @@ function barChartSvg(opts: {
   return `<?xml version="1.0" encoding="UTF-8"?>
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${width} ${height}" width="${width}" height="${height}">
   <style>
-    .title { font: 600 15px system-ui, sans-serif; fill: #0f172a; }
-    .label { font: 12px system-ui, sans-serif; fill: #334155; }
-    .value { font: 12px system-ui, sans-serif; fill: #475569; }
-    .sub { font: 11px system-ui, sans-serif; fill: #64748b; }
+    .title { font: 600 18px system-ui, sans-serif; fill: #0f172a; }
+    .label { font: 14px system-ui, sans-serif; fill: #334155; }
+    .value { font: 14px system-ui, sans-serif; fill: #475569; }
+    .sub { font: 12px system-ui, sans-serif; fill: #64748b; }
   </style>
   <rect width="100%" height="100%" fill="#fafafa"/>
-  <text x="12" y="22" class="title">${escapeXml(opts.title)}</text>
-  ${opts.unit ? `<text x="12" y="36" class="sub">${escapeXml(opts.unit)}</text>` : ""}
+  <text x="16" y="28" class="title">${escapeXml(opts.title)}</text>
+  ${opts.unit ? `<text x="16" y="46" class="sub">${escapeXml(opts.unit)}</text>` : ""}
   ${bars}
 </svg>`;
 }
@@ -108,9 +114,9 @@ function scatterSvg(opts: {
   width?: number;
   height?: number;
 }): string {
-  const W = opts.width ?? 640;
-  const H = opts.height ?? 420;
-  const pad = { l: 56, r: 24, t: 40, b: 48 };
+  const W = opts.width ?? CHART_WIDTH;
+  const H = opts.height ?? 500;
+  const pad = { l: 64, r: 32, t: 48, b: 56 };
   const plotW = W - pad.l - pad.r;
   const plotH = H - pad.t - pad.b;
   const maxX = Math.max(...opts.points.map((p) => p.x), 1);
@@ -121,17 +127,17 @@ function scatterSvg(opts: {
       const cx = pad.l + (p.x / maxX) * plotW;
       const cy = pad.t + plotH - (p.y / maxY) * plotH;
       return `
-    <circle cx="${cx}" cy="${cy}" r="7" fill="${p.color}" opacity="0.85"/>
-    <text x="${cx + 10}" y="${cy + 4}" class="dot-label">${escapeXml(shortName(p.label))}</text>`;
+    <circle cx="${cx}" cy="${cy}" r="9" fill="${p.color}" opacity="0.85"/>
+    <text x="${cx + 12}" y="${cy + 5}" class="dot-label">${escapeXml(shortName(p.label))}</text>`;
     })
     .join("");
 
   return `<?xml version="1.0" encoding="UTF-8"?>
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${W} ${H}" width="${W}" height="${H}">
   <style>
-    .title { font: 600 15px system-ui, sans-serif; fill: #0f172a; }
-    .axis { font: 11px system-ui, sans-serif; fill: #64748b; }
-    .dot-label { font: 10px system-ui, sans-serif; fill: #334155; }
+    .title { font: 600 18px system-ui, sans-serif; fill: #0f172a; }
+    .axis { font: 13px system-ui, sans-serif; fill: #64748b; }
+    .dot-label { font: 12px system-ui, sans-serif; fill: #334155; }
   </style>
   <rect width="100%" height="100%" fill="#fafafa"/>
   <text x="12" y="22" class="title">${escapeXml(opts.title)}</text>
@@ -145,6 +151,20 @@ function scatterSvg(opts: {
 
 function escapeXml(s: string): string {
   return s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+}
+
+/** Full-width chart block for GitHub README / REPORT (HTML img renders larger than table cells). */
+function chartEmbedMd(relPath: string, title: string, caption?: string): string[] {
+  const lines = [
+    `#### ${title}`,
+    ``,
+    `<p align="center">`,
+    `  <img src="${relPath}" alt="${title}" width="${CHART_WIDTH}" />`,
+    `</p>`,
+    ``,
+  ];
+  if (caption) lines.splice(1, 0, caption, ``);
+  return lines;
 }
 
 const PALETTE = [
@@ -239,21 +259,13 @@ function main() {
     ``,
     `## Visual summary`,
     ``,
-    `### Strict pass rate`,
-    `![Strict pass](./charts/strict-pass.svg)`,
+    `Charts render at **${CHART_WIDTH}px** width — scroll horizontally on narrow screens if needed.`,
     ``,
-    `### Cost per full eval (25 scenarios)`,
-    `![Cost IDR](./charts/cost-25-idr.svg)`,
-    ``,
-    `### Latency`,
-    `![Latency](./charts/latency.svg)`,
-    ``,
-    `### Quality vs speed`,
-    `![Quality vs latency](./charts/quality-vs-latency.svg)`,
-    ``,
-    `### Throughput`,
-    `![Throughput](./charts/throughput.svg)`,
-    ``,
+    ...chartEmbedMd("./charts/strict-pass.svg", "Strict pass rate", "Hard-25 scenarios passed with exact structured match."),
+    ...chartEmbedMd("./charts/cost-25-idr.svg", "Cost per 25-scenario eval run (IDR)", `FX: 1 USD = ${USD_TO_IDR.toLocaleString("id-ID")} IDR`),
+    ...chartEmbedMd("./charts/latency.svg", "Mean eval latency per scenario"),
+    ...chartEmbedMd("./charts/quality-vs-latency.svg", "Quality vs speed trade-off"),
+    ...chartEmbedMd("./charts/throughput.svg", "OpenRouter throughput (tokens/sec)"),
     `## Master table (USD + IDR)`,
     ``,
     `| Model | Strict | Composite | Latency | $/25-run | IDR/25-run | $/request | IDR/request |`,

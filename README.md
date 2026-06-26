@@ -17,11 +17,39 @@ Eight models were evaluated on **25 extreme Indonesian finance-parse scenarios**
 
 ### Visual scorecard
 
-| Strict pass | Cost per 25-run (IDR) | Latency | Quality vs speed | Throughput |
-|-------------|----------------------|---------|------------------|------------|
-| ![Strict pass](./docs/charts/strict-pass.svg) | ![Cost](./docs/charts/cost-25-idr.svg) | ![Latency](./docs/charts/latency.svg) | ![Trade-off](./docs/charts/quality-vs-latency.svg) | ![Throughput](./docs/charts/throughput.svg) |
+Eight models · hard-25 eval · charts at full width (not squeezed into one row).
 
-Full charts + tables: **[`docs/REPORT.md`](docs/REPORT.md)**
+#### Strict pass rate
+
+<p align="center">
+  <img src="./docs/charts/strict-pass.svg" alt="Hard-25 strict pass rate by model" width="960" />
+</p>
+
+#### Cost per 25-scenario eval run (IDR)
+
+<p align="center">
+  <img src="./docs/charts/cost-25-idr.svg" alt="Estimated cost per full hard-25 run in Indonesian Rupiah" width="960" />
+</p>
+
+#### Mean latency per scenario
+
+<p align="center">
+  <img src="./docs/charts/latency.svg" alt="Mean eval latency in milliseconds" width="960" />
+</p>
+
+#### Quality vs speed
+
+<p align="center">
+  <img src="./docs/charts/quality-vs-latency.svg" alt="Composite quality score vs mean latency" width="960" />
+</p>
+
+#### Throughput (OpenRouter)
+
+<p align="center">
+  <img src="./docs/charts/throughput.svg" alt="Completion tokens per second from OpenRouter CSV" width="960" />
+</p>
+
+Full tables + notes: **[`docs/REPORT.md`](docs/REPORT.md)**
 
 ### Model ranking (hard-25)
 
