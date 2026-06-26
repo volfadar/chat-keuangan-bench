@@ -120,8 +120,8 @@ function scatterSvg(opts: {
   height?: number;
 }): string {
   const W = opts.width ?? CHART_WIDTH;
-  const H = opts.height ?? 500;
-  const pad = { l: 72, r: 72, t: 48, b: 56 };
+  const H = opts.height ?? 540;
+  const pad = { l: 72, r: 72, t: 48, b: 72 };
   const plotW = W - pad.l - pad.r;
   const plotH = H - pad.t - pad.b;
   const dataMinX = Math.min(...opts.points.map((p) => p.x));
@@ -151,13 +151,9 @@ function scatterSvg(opts: {
       const cx = pad.l + ((p.x - displayMinX) / displaySpan) * plotW;
       const yClamped = Math.min(maxY, Math.max(minY, p.y));
       const cy = pad.t + plotH - ((yClamped - minY) / ySpan) * plotH;
-      const nearRight = cx > pad.l + plotW * 0.78;
-      const nearLeft = cx < pad.l + plotW * 0.12;
-      const labelX = nearRight ? cx - 14 : nearLeft ? cx + 14 : cx + 12;
-      const anchor = nearRight ? "end" : "start";
       return `
     <circle cx="${cx}" cy="${cy}" r="9" fill="${p.color}" opacity="0.85"/>
-    <text x="${labelX}" y="${cy + 5}" text-anchor="${anchor}" class="dot-label">${escapeXml(shortName(p.label))}</text>`;
+    <text x="${cx}" y="${cy + 22}" text-anchor="middle" class="dot-label">${escapeXml(shortName(p.label))}</text>`;
     })
     .join("");
 
