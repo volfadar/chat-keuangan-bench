@@ -86,6 +86,18 @@ Per **single parse request** (from OpenRouter CSV averages):
 
 Details: [`docs/FINDINGS.md`](docs/FINDINGS.md) · [`docs/results/hard-25-analysis-8models.md`](docs/results/hard-25-analysis-8models.md)
 
+### Building a SaaS? (pricing & runway)
+
+If you're shipping an **AI-powered pencatatan keuangan** app, don't guess margins — see **[`docs/SAAS-PRICING-GUIDE.md`](docs/SAAS-PRICING-GUIDE.md)** for:
+
+- **Unit economics** per parse (IDR, with retry buffers)
+- **3 capital scenarios** — aman (safe), normal, ketat (lean) monthly burn
+- **Main product vs AI add-on** pricing (Rp 49rb core → Rp 49–149rb AI tiers)
+- **Margin rules** (AI COGS ≤ 15–20% of ARPU, bundle math, overage)
+- Example P&L at 150 paying users
+
+Quick rule: plan **~Rp 20/parse** on production model; charge **≥ Rp 49.000/mo** for a 100-parse AI add-on.
+
 ---
 
 ## What it tests
