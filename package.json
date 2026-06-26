@@ -1,0 +1,43 @@
+{
+  "name": "rupiah-bench",
+  "version": "0.1.0",
+  "description": "Open benchmark for parsing Indonesian casual finance chat (WhatsApp-style) into structured Rupiah transactions via LLMs",
+  "type": "module",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/volfadar/rupiah-bench"
+  },
+  "keywords": [
+    "indonesia",
+    "rupiah",
+    "finance",
+    "llm",
+    "benchmark",
+    "evaluation",
+    "whatsapp",
+    "openrouter",
+    "structured-extraction"
+  ],
+  "scripts": {
+    "eval": "bun run src/core/eval-core.ts",
+    "eval:hard-12": "bun run scripts/eval-hard-12.ts",
+    "eval:hard-25": "bun run scripts/eval-hard-25.ts",
+    "eval:prompt-tune": "bun run scripts/eval-prompt-tune.ts",
+    "dry-run": "bun run src/core/eval-core.ts --dry-run --limit 5"
+  },
+  "dependencies": {
+    "@ai-sdk/openai-compatible": "^2.0.47",
+    "@openrouter/ai-sdk-provider": "^2.9.0",
+    "ai": "^6.0.176",
+    "dotenv": "^16.4.7",
+    "zod": "^3.24.0"
+  },
+  "devDependencies": {
+    "@types/bun": "^1.2.0",
+    "typescript": "^5.8.0"
+  },
+  "engines": {
+    "bun": ">=1.1.0"
+  }
+}
