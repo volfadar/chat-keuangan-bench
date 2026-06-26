@@ -17,9 +17,9 @@ Eight models were evaluated on **25 extreme Indonesian finance-parse scenarios**
 
 ### Visual scorecard
 
-| Strict pass | Cost per 25-run (IDR) | Latency | Quality vs speed |
-|-------------|----------------------|---------|------------------|
-| ![Strict pass](./docs/charts/strict-pass.svg) | ![Cost](./docs/charts/cost-25-idr.svg) | ![Latency](./docs/charts/latency.svg) | ![Trade-off](./docs/charts/quality-vs-latency.svg) |
+| Strict pass | Cost per 25-run (IDR) | Latency | Quality vs speed | Throughput |
+|-------------|----------------------|---------|------------------|------------|
+| ![Strict pass](./docs/charts/strict-pass.svg) | ![Cost](./docs/charts/cost-25-idr.svg) | ![Latency](./docs/charts/latency.svg) | ![Trade-off](./docs/charts/quality-vs-latency.svg) | ![Throughput](./docs/charts/throughput.svg) |
 
 Full charts + tables: **[`docs/REPORT.md`](docs/REPORT.md)**
 
