@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 500" width="960" height="500">
+  <style>
+    .title { font: 600 18px system-ui, sans-serif; fill: #0f172a; }
+    .axis { font: 13px system-ui, sans-serif; fill: #64748b; }
+    .dot-label { font: 12px system-ui, sans-serif; fill: #334155; }
+  </style>
+  <rect width="100%" height="100%" fill="#fafafa"/>
+  <text x="12" y="22" class="title">Quality vs price (trade-off)</text>
+  <line x1="64" y1="444" x2="928" y2="444" stroke="#cbd5e1"/>
+  <line x1="64" y1="48" x2="64" y2="444" stroke="#cbd5e1"/>
+  <text x="496" y="492" text-anchor="middle" class="axis">IDR per parse (OpenRouter avg) → higher = pricier</text>
+  <text x="14" y="246" transform="rotate(-90 14 246)" text-anchor="middle" class="axis">Composite quality score</text>
+  
+    <circle cx="552.3478260869565" cy="52.59359999999998" r="9" fill="#2563eb" opacity="0.85"/>
+    <text x="564.3478260869565" y="57.59359999999998" class="dot-label">gemini-3.1-flash-lite</text>
+    <circle cx="928" cy="52.59359999999998" r="9" fill="#16a34a" opacity="0.85"/>
+    <text x="940" y="57.59359999999998" class="dot-label">gemini-3-flash-preview</text>
+    <circle cx="251.82608695652172" cy="56.71199999999999" r="9" fill="#dc2626" opacity="0.85"/>
+    <text x="263.82608695652175" y="61.71199999999999" class="dot-label">gemma-4-31b-it</text>
+    <circle cx="326.95652173913044" cy="57.18719999999996" r="9" fill="#9333ea" opacity="0.85"/>
+    <text x="338.95652173913044" y="62.18719999999996" class="dot-label">glm-4.5</text>
+    <circle cx="326.95652173913044" cy="60.8304" r="9" fill="#ea580c" opacity="0.85"/>
+    <text x="338.95652173913044" y="65.8304" class="dot-label">glm-4.7</text>
+    <circle cx="251.82608695652172" cy="70.49280000000005" r="9" fill="#0891b2" opacity="0.85"/>
+    <text x="263.82608695652175" y="75.49280000000005" class="dot-label">ling-2.6-1t</text>
+    <circle cx="251.82608695652172" cy="62.57280000000003" r="9" fill="#ca8a04" opacity="0.85"/>
+    <text x="263.82608695652175" y="67.57280000000003" class="dot-label">gpt-oss-120b</text>
+    <circle cx="139.1304347826087" cy="59.08800000000002" r="9" fill="#4f46e5" opacity="0.85"/>
+    <text x="151.1304347826087" y="64.08800000000002" class="dot-label">deepseek-v4-flash</text>
+</svg>

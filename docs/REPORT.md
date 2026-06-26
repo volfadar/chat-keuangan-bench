@@ -29,10 +29,12 @@ FX: 1 USD = 17.905 IDR
   <img src="./charts/latency.svg" alt="Mean eval latency per scenario" width="960" />
 </p>
 
-#### Quality vs speed trade-off
+#### Quality vs price trade-off
+Ideal quadrant: **top-left** (high composite, low IDR/parse).
+
 
 <p align="center">
-  <img src="./charts/quality-vs-latency.svg" alt="Quality vs speed trade-off" width="960" />
+  <img src="./charts/quality-vs-price.svg" alt="Quality vs price trade-off" width="960" />
 </p>
 
 #### OpenRouter throughput (tokens/sec)

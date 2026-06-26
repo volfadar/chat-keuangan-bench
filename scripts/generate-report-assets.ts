@@ -220,12 +220,12 @@ function main() {
   });
 
   const scatterChart = scatterSvg({
-    title: "Quality vs speed (trade-off)",
-    xLabel: "Mean latency (ms) — lower is better →",
+    title: "Quality vs price (trade-off)",
+    xLabel: "IDR per parse (OpenRouter avg) → higher = pricier",
     yLabel: "Composite quality score",
     points: rows.map((r, i) => ({
       label: r.modelId,
-      x: r.evalMeanMs ?? 0,
+      x: usdToIdr(r.csvCostPerReqUsd ?? 0),
       y: r.composite ?? 0,
       color: PALETTE[i % PALETTE.length]!,
     })),
@@ -247,7 +247,7 @@ function main() {
   writeFileSync(resolve(outDir, "strict-pass.svg"), strictChart);
   writeFileSync(resolve(outDir, "cost-25-idr.svg"), costChart);
   writeFileSync(resolve(outDir, "latency.svg"), latencyChart);
-  writeFileSync(resolve(outDir, "quality-vs-latency.svg"), scatterChart);
+  writeFileSync(resolve(outDir, "quality-vs-price.svg"), scatterChart);
   writeFileSync(resolve(outDir, "throughput.svg"), throughputChart);
 
   // Enriched markdown report
@@ -264,7 +264,7 @@ function main() {
     ...chartEmbedMd("./charts/strict-pass.svg", "Strict pass rate", "Hard-25 scenarios passed with exact structured match."),
     ...chartEmbedMd("./charts/cost-25-idr.svg", "Cost per 25-scenario eval run (IDR)", `FX: 1 USD = ${USD_TO_IDR.toLocaleString("id-ID")} IDR`),
     ...chartEmbedMd("./charts/latency.svg", "Mean eval latency per scenario"),
-    ...chartEmbedMd("./charts/quality-vs-latency.svg", "Quality vs speed trade-off"),
+    ...chartEmbedMd("./charts/quality-vs-price.svg", "Quality vs price trade-off", "Ideal quadrant: **top-left** (high composite, low IDR/parse)."),
     ...chartEmbedMd("./charts/throughput.svg", "OpenRouter throughput (tokens/sec)"),
     `## Master table (USD + IDR)`,
     ``,

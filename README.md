@@ -37,10 +37,10 @@ Eight models · hard-25 eval · charts at full width (not squeezed into one row)
   <img src="./docs/charts/latency.svg" alt="Mean eval latency in milliseconds" width="960" />
 </p>
 
-#### Quality vs speed
+#### Quality vs price
 
 <p align="center">
-  <img src="./docs/charts/quality-vs-latency.svg" alt="Composite quality score vs mean latency" width="960" />
+  <img src="./docs/charts/quality-vs-price.svg" alt="Composite quality score vs IDR cost per parse" width="960" />
 </p>
 
 #### Throughput (OpenRouter)
