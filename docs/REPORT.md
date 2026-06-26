@@ -30,7 +30,7 @@ FX: 1 USD = 17.905 IDR
 </p>
 
 #### Quality vs price trade-off
-Ideal quadrant: **top-left** (high composite, low IDR/parse).
+Ideal quadrant: **top-right** (high composite, cheapest → right). Y-axis zoomed to 90–100.
 
 
 <p align="center">

@@ -111,21 +111,38 @@ function scatterSvg(opts: {
   points: Array<{ label: string; x: number; y: number; color: string }>;
   xLabel: string;
   yLabel: string;
+  yMin?: number;
+  yMax?: number;
   width?: number;
   height?: number;
 }): string {
   const W = opts.width ?? CHART_WIDTH;
   const H = opts.height ?? 500;
-  const pad = { l: 64, r: 32, t: 48, b: 56 };
+  const pad = { l: 72, r: 32, t: 48, b: 56 };
   const plotW = W - pad.l - pad.r;
   const plotH = H - pad.t - pad.b;
-  const maxX = Math.max(...opts.points.map((p) => p.x), 1);
-  const maxY = 100;
+  const minX = Math.min(...opts.points.map((p) => p.x));
+  const maxX = Math.max(...opts.points.map((p) => p.x));
+  const xSpan = maxX - minX || 1;
+  const minY = opts.yMin ?? 0;
+  const maxY = opts.yMax ?? 100;
+  const ySpan = maxY - minY || 1;
+
+  const yTicks = [minY, minY + ySpan * 0.5, maxY];
+  const yGrid = yTicks
+    .map((tick) => {
+      const cy = pad.t + plotH - ((tick - minY) / ySpan) * plotH;
+      return `
+    <line x1="${pad.l}" y1="${cy}" x2="${pad.l + plotW}" y2="${cy}" stroke="#e2e8f0" stroke-dasharray="4 4"/>
+    <text x="${pad.l - 8}" y="${cy + 4}" text-anchor="end" class="tick">${tick.toFixed(0)}</text>`;
+    })
+    .join("");
 
   const dots = opts.points
     .map((p) => {
-      const cx = pad.l + (p.x / maxX) * plotW;
-      const cy = pad.t + plotH - (p.y / maxY) * plotH;
+      const cx = pad.l + ((p.x - minX) / xSpan) * plotW;
+      const yClamped = Math.min(maxY, Math.max(minY, p.y));
+      const cy = pad.t + plotH - ((yClamped - minY) / ySpan) * plotH;
       return `
     <circle cx="${cx}" cy="${cy}" r="9" fill="${p.color}" opacity="0.85"/>
     <text x="${cx + 12}" y="${cy + 5}" class="dot-label">${escapeXml(shortName(p.label))}</text>`;
@@ -137,14 +154,18 @@ function scatterSvg(opts: {
   <style>
     .title { font: 600 18px system-ui, sans-serif; fill: #0f172a; }
     .axis { font: 13px system-ui, sans-serif; fill: #64748b; }
+    .tick { font: 11px system-ui, sans-serif; fill: #94a3b8; }
     .dot-label { font: 12px system-ui, sans-serif; fill: #334155; }
+    .ideal { font: 11px system-ui, sans-serif; fill: #16a34a; }
   </style>
   <rect width="100%" height="100%" fill="#fafafa"/>
   <text x="12" y="22" class="title">${escapeXml(opts.title)}</text>
+  <text x="${pad.l + plotW - 4}" y="${pad.t + 16}" text-anchor="end" class="ideal">ideal ↗</text>
+  ${yGrid}
   <line x1="${pad.l}" y1="${pad.t + plotH}" x2="${pad.l + plotW}" y2="${pad.t + plotH}" stroke="#cbd5e1"/>
   <line x1="${pad.l}" y1="${pad.t}" x2="${pad.l}" y2="${pad.t + plotH}" stroke="#cbd5e1"/>
   <text x="${pad.l + plotW / 2}" y="${H - 8}" text-anchor="middle" class="axis">${escapeXml(opts.xLabel)}</text>
-  <text x="14" y="${pad.t + plotH / 2}" transform="rotate(-90 14 ${pad.t + plotH / 2})" text-anchor="middle" class="axis">${escapeXml(opts.yLabel)}</text>
+  <text x="18" y="${pad.t + plotH / 2}" transform="rotate(-90 18 ${pad.t + plotH / 2})" text-anchor="middle" class="axis">${escapeXml(opts.yLabel)}</text>
   ${dots}
 </svg>`;
 }
@@ -219,16 +240,26 @@ function main() {
       })),
   });
 
+  const idrPrices = rows.map((r) => usdToIdr(r.csvCostPerReqUsd ?? 0));
+  const minPrice = Math.min(...idrPrices);
+  const maxPrice = Math.max(...idrPrices);
+
   const scatterChart = scatterSvg({
     title: "Quality vs price (trade-off)",
-    xLabel: "IDR per parse (OpenRouter avg) → higher = pricier",
-    yLabel: "Composite quality score",
-    points: rows.map((r, i) => ({
-      label: r.modelId,
-      x: usdToIdr(r.csvCostPerReqUsd ?? 0),
-      y: r.composite ?? 0,
-      color: PALETTE[i % PALETTE.length]!,
-    })),
+    xLabel: "← lebih mahal · lebih murah →",
+    yLabel: "Composite score (90–100)",
+    yMin: 90,
+    yMax: 100,
+    points: rows.map((r, i) => {
+      const priceIdr = usdToIdr(r.csvCostPerReqUsd ?? 0);
+      return {
+        label: r.modelId,
+        // Higher x = cheaper (top-right = best)
+        x: maxPrice - priceIdr + minPrice,
+        y: r.composite ?? 0,
+        color: PALETTE[i % PALETTE.length]!,
+      };
+    }),
   });
 
   const throughputChart = barChartSvg({
@@ -264,7 +295,7 @@ function main() {
     ...chartEmbedMd("./charts/strict-pass.svg", "Strict pass rate", "Hard-25 scenarios passed with exact structured match."),
     ...chartEmbedMd("./charts/cost-25-idr.svg", "Cost per 25-scenario eval run (IDR)", `FX: 1 USD = ${USD_TO_IDR.toLocaleString("id-ID")} IDR`),
     ...chartEmbedMd("./charts/latency.svg", "Mean eval latency per scenario"),
-    ...chartEmbedMd("./charts/quality-vs-price.svg", "Quality vs price trade-off", "Ideal quadrant: **top-left** (high composite, low IDR/parse)."),
+    ...chartEmbedMd("./charts/quality-vs-price.svg", "Quality vs price trade-off", "Ideal quadrant: **top-right** (high composite, cheapest → right). Y-axis zoomed to 90–100."),
     ...chartEmbedMd("./charts/throughput.svg", "OpenRouter throughput (tokens/sec)"),
     `## Master table (USD + IDR)`,
     ``,

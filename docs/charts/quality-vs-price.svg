@@ -3,29 +3,39 @@
   <style>
     .title { font: 600 18px system-ui, sans-serif; fill: #0f172a; }
     .axis { font: 13px system-ui, sans-serif; fill: #64748b; }
+    .tick { font: 11px system-ui, sans-serif; fill: #94a3b8; }
     .dot-label { font: 12px system-ui, sans-serif; fill: #334155; }
+    .ideal { font: 11px system-ui, sans-serif; fill: #16a34a; }
   </style>
   <rect width="100%" height="100%" fill="#fafafa"/>
   <text x="12" y="22" class="title">Quality vs price (trade-off)</text>
-  <line x1="64" y1="444" x2="928" y2="444" stroke="#cbd5e1"/>
-  <line x1="64" y1="48" x2="64" y2="444" stroke="#cbd5e1"/>
-  <text x="496" y="492" text-anchor="middle" class="axis">IDR per parse (OpenRouter avg) → higher = pricier</text>
-  <text x="14" y="246" transform="rotate(-90 14 246)" text-anchor="middle" class="axis">Composite quality score</text>
+  <text x="924" y="64" text-anchor="end" class="ideal">ideal ↗</text>
   
-    <circle cx="552.3478260869565" cy="52.59359999999998" r="9" fill="#2563eb" opacity="0.85"/>
-    <text x="564.3478260869565" y="57.59359999999998" class="dot-label">gemini-3.1-flash-lite</text>
-    <circle cx="928" cy="52.59359999999998" r="9" fill="#16a34a" opacity="0.85"/>
-    <text x="940" y="57.59359999999998" class="dot-label">gemini-3-flash-preview</text>
-    <circle cx="251.82608695652172" cy="56.71199999999999" r="9" fill="#dc2626" opacity="0.85"/>
-    <text x="263.82608695652175" y="61.71199999999999" class="dot-label">gemma-4-31b-it</text>
-    <circle cx="326.95652173913044" cy="57.18719999999996" r="9" fill="#9333ea" opacity="0.85"/>
-    <text x="338.95652173913044" y="62.18719999999996" class="dot-label">glm-4.5</text>
-    <circle cx="326.95652173913044" cy="60.8304" r="9" fill="#ea580c" opacity="0.85"/>
-    <text x="338.95652173913044" y="65.8304" class="dot-label">glm-4.7</text>
-    <circle cx="251.82608695652172" cy="70.49280000000005" r="9" fill="#0891b2" opacity="0.85"/>
-    <text x="263.82608695652175" y="75.49280000000005" class="dot-label">ling-2.6-1t</text>
-    <circle cx="251.82608695652172" cy="62.57280000000003" r="9" fill="#ca8a04" opacity="0.85"/>
-    <text x="263.82608695652175" y="67.57280000000003" class="dot-label">gpt-oss-120b</text>
-    <circle cx="139.1304347826087" cy="59.08800000000002" r="9" fill="#4f46e5" opacity="0.85"/>
-    <text x="151.1304347826087" y="64.08800000000002" class="dot-label">deepseek-v4-flash</text>
+    <line x1="72" y1="444" x2="928" y2="444" stroke="#e2e8f0" stroke-dasharray="4 4"/>
+    <text x="64" y="448" text-anchor="end" class="tick">90</text>
+    <line x1="72" y1="246" x2="928" y2="246" stroke="#e2e8f0" stroke-dasharray="4 4"/>
+    <text x="64" y="250" text-anchor="end" class="tick">95</text>
+    <line x1="72" y1="48" x2="928" y2="48" stroke="#e2e8f0" stroke-dasharray="4 4"/>
+    <text x="64" y="52" text-anchor="end" class="tick">100</text>
+  <line x1="72" y1="444" x2="928" y2="444" stroke="#cbd5e1"/>
+  <line x1="72" y1="48" x2="72" y2="444" stroke="#cbd5e1"/>
+  <text x="500" y="492" text-anchor="middle" class="axis">← lebih mahal · lebih murah →</text>
+  <text x="18" y="246" transform="rotate(-90 18 246)" text-anchor="middle" class="axis">Composite score (90–100)</text>
+  
+    <circle cx="479.6190476190476" cy="93.93599999999986" r="9" fill="#2563eb" opacity="0.85"/>
+    <text x="491.6190476190476" y="98.93599999999986" class="dot-label">gemini-3.1-flash-lite</text>
+    <circle cx="72" cy="93.93599999999986" r="9" fill="#16a34a" opacity="0.85"/>
+    <text x="84" y="98.93599999999986" class="dot-label">gemini-3-flash-preview</text>
+    <circle cx="805.7142857142857" cy="135.12000000000012" r="9" fill="#dc2626" opacity="0.85"/>
+    <text x="817.7142857142857" y="140.12000000000012" class="dot-label">gemma-4-31b-it</text>
+    <circle cx="724.1904761904761" cy="139.87199999999973" r="9" fill="#9333ea" opacity="0.85"/>
+    <text x="736.1904761904761" y="144.87199999999973" class="dot-label">glm-4.5</text>
+    <circle cx="724.1904761904761" cy="176.3039999999998" r="9" fill="#ea580c" opacity="0.85"/>
+    <text x="736.1904761904761" y="181.3039999999998" class="dot-label">glm-4.7</text>
+    <circle cx="805.7142857142857" cy="272.9280000000002" r="9" fill="#0891b2" opacity="0.85"/>
+    <text x="817.7142857142857" y="277.9280000000002" class="dot-label">ling-2.6-1t</text>
+    <circle cx="805.7142857142857" cy="193.72800000000026" r="9" fill="#ca8a04" opacity="0.85"/>
+    <text x="817.7142857142857" y="198.72800000000026" class="dot-label">gpt-oss-120b</text>
+    <circle cx="928" cy="158.87999999999988" r="9" fill="#4f46e5" opacity="0.85"/>
+    <text x="940" y="163.87999999999988" class="dot-label">deepseek-v4-flash</text>
 </svg>

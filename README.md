@@ -39,8 +39,10 @@ Eight models · hard-25 eval · charts at full width (not squeezed into one row)
 
 #### Quality vs price
 
+Ideal quadrant: **top-right** (highest composite, cheapest models on the right). Y-axis zoomed to 90–100.
+
 <p align="center">
-  <img src="./docs/charts/quality-vs-price.svg" alt="Composite quality score vs IDR cost per parse" width="960" />
+  <img src="./docs/charts/quality-vs-price.svg" alt="Composite quality score vs price — cheaper to the right" width="960" />
 </p>
 
 #### Throughput (OpenRouter)
