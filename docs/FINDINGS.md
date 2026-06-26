@@ -1,6 +1,6 @@
 # Research findings (June 2026)
 
-Summary of the model-selection study that produced **rupiah-bench**. Reproducible via `bun run eval:hard-25` (costs OpenRouter credits).
+Summary of the model-selection study that produced **chat-keuangan-bench** (formerly `rupiah-bench`). Reproducible via `bun run eval:hard-25` (costs OpenRouter credits).
 
 ## Goal
 

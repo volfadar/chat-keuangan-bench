@@ -1,12 +1,12 @@
 {
-  "name": "rupiah-bench",
-  "version": "0.1.0",
+  "name": "chat-keuangan-bench",
+  "version": "0.2.0",
   "description": "Open benchmark for parsing Indonesian casual finance chat (WhatsApp-style) into structured Rupiah transactions via LLMs",
   "type": "module",
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/volfadar/rupiah-bench"
+    "url": "https://github.com/volfadar/chat-keuangan-bench"
   },
   "keywords": [
     "indonesia",
@@ -23,7 +23,9 @@
     "eval": "bun run src/core/eval-core.ts",
     "eval:hard-12": "bun run scripts/eval-hard-12.ts",
     "eval:hard-25": "bun run scripts/eval-hard-25.ts",
+    "eval:scorecard": "bun run scripts/build-finance-model-scorecard.ts",
     "eval:prompt-tune": "bun run scripts/eval-prompt-tune.ts",
+    "report": "bun run scripts/generate-report-assets.ts",
     "dry-run": "bun run src/core/eval-core.ts --dry-run --limit 5"
   },
   "dependencies": {

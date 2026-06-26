@@ -6,15 +6,15 @@
  * decimals, money slang (ceban/goceng), spelled amounts, future intent vs past, refund
  * income, discount net price, cancelled purchase, per-kg qty, emoji/WA noise, 5-item rekap.
  *
- * Runs ONLY the top-5 models from the hard-12 run (excludes ling, gpt-oss, deepseek).
+ * Runs all 8 models from prior finance-parse eval sessions (see ALL_EVAL_MODELS).
  *
  * Run:
- *   bun run scripts/eval-hard-25.ts
- *   bun run scripts/eval-hard-25.ts --model google/gemma-4-31b-it
- *   bun run scripts/eval-hard-25.ts --dry-run
+ *   bun run apps/ai/scripts/eval-finance-hard-25.ts
+ *   bun run apps/ai/scripts/eval-finance-hard-25.ts --model google/gemma-4-31b-it
+ *   bun run apps/ai/scripts/eval-finance-hard-25.ts --dry-run
  */
 
-import { mkdirSync, writeFileSync } from "node:fs";
+import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { resolve } from "node:path";
 import {
   parseMessage,
@@ -23,15 +23,18 @@ import {
   type ExpectedEntry,
   type ParsedFinance,
   type Scenario,
-} from "../src/core/eval-core.ts";
+} from "./eval-gemma-finance-parse.ts";
 
-// Top-5 from the hard-12 run (sorted: strict desc, then composite desc).
-const TOP_5_MODELS = [
-  "google/gemma-4-31b-it",
+// Full roster from all finance-parse eval sessions (hard-12 + hard-25 + battle).
+export const ALL_EVAL_MODELS = [
   "google/gemini-3.1-flash-lite",
+  "google/gemini-3-flash-preview",
+  "google/gemma-4-31b-it",
   "z-ai/glm-4.5",
   "z-ai/glm-4.7",
-  "google/gemini-3-flash-preview",
+  "openai/gpt-oss-120b",
+  "inclusionai/ling-2.6-1t",
+  "deepseek/deepseek-v4-flash",
 ] as const;
 
 type AltStrictRule =
@@ -761,15 +764,34 @@ interface ModelSummary {
 
 function parseArgs(argv: string[]) {
   let model: string | undefined;
+  let models: string[] | undefined;
   let dryRun = false;
+  const mergeFrom: string[] = [];
   for (let i = 2; i < argv.length; i++) {
     const a = argv[i];
     if (a === "--dry-run") dryRun = true;
     else if (a === "--model" && argv[i + 1]) {
       model = argv[++i];
+    } else if (a === "--models" && argv[i + 1]) {
+      models = (argv[++i] ?? "")
+        .split(",")
+        .map((s) => s.trim())
+        .filter(Boolean);
+    } else if (a === "--merge-from" && argv[i + 1]) {
+      mergeFrom.push(resolve(argv[++i]!));
     }
   }
-  return { model, dryRun };
+  return { model, models, dryRun, mergeFrom };
+}
+
+function mergeResultRows(
+  base: ScenarioResult[],
+  incoming: ScenarioResult[],
+): ScenarioResult[] {
+  const byKey = new Map<string, ScenarioResult>();
+  for (const r of base) byKey.set(`${r.modelId}::${r.scenarioId}`, r);
+  for (const r of incoming) byKey.set(`${r.modelId}::${r.scenarioId}`, r);
+  return [...byKey.values()];
 }
 
 function buildMarkdownReport(
@@ -784,11 +806,11 @@ function buildMarkdownReport(
   const lines: string[] = [
     `# Finance Parse Hard-25 Eval — ${runAt}`,
     "",
-    `25 extreme-but-realistic scenarios (12 rewrites + 13 new angles) × top-5 models.`,
+    `25 extreme-but-realistic scenarios (12 rewrites + 13 new angles) × ${ALL_EVAL_MODELS.length} models.`,
     "",
-    "## Models (top-5 from hard-12, ranked)",
+    "## Models (full eval roster)",
     "",
-    TOP_5_MODELS.map((m) => `- \`${m}\``).join("\n"),
+    ALL_EVAL_MODELS.map((m) => `- \`${m}\``).join("\n"),
     "",
     "## Recommendation",
     "",
@@ -876,8 +898,12 @@ function buildMarkdownReport(
 }
 
 async function main() {
-  const { model: singleModel, dryRun } = parseArgs(process.argv);
-  const models = singleModel ? [singleModel] : [...TOP_5_MODELS];
+  const { model: singleModel, models: modelsArg, dryRun, mergeFrom } = parseArgs(process.argv);
+  const models = singleModel
+    ? [singleModel]
+    : modelsArg?.length
+      ? modelsArg
+      : [...ALL_EVAL_MODELS];
   const runAt = new Date().toISOString();
 
   console.log(`Finance Parse HARD-25 eval — ${runAt}`);
@@ -947,8 +973,20 @@ async function main() {
     }
   }
 
-  const summaries: ModelSummary[] = models.map((modelId) => {
-    const rows = results.filter((r) => r.modelId === modelId);
+  let mergedResults = results;
+  if (mergeFrom.length > 0) {
+    let prior: ScenarioResult[] = [];
+    for (const p of mergeFrom) {
+      const data = JSON.parse(readFileSync(p, "utf8")) as { results: ScenarioResult[] };
+      prior = mergeResultRows(prior, data.results);
+      console.log(`\nMerged ${data.results.length} rows from ${p}`);
+    }
+    mergedResults = mergeResultRows(prior, results);
+    console.log(`Combined total: ${mergedResults.length} result rows, ${new Set(mergedResults.map((r) => r.modelId)).size} models`);
+  }
+
+  const summaries: ModelSummary[] = [...new Set(mergedResults.map((r) => r.modelId))].map((modelId) => {
+    const rows = mergedResults.filter((r) => r.modelId === modelId);
     const ok = rows.filter((r) => r.quality?.strictPass);
     const composites = rows.filter((r) => r.quality).map((r) => r.quality!.compositeScore);
     const tierCounts: Record<QualityTier, number> = {
@@ -996,15 +1034,17 @@ async function main() {
     );
   }
 
-  const logDir = resolve(import.meta.dirname, "../docs/results");
+  const logDir = resolve(import.meta.dirname, "../../../docs/research/logs");
   mkdirSync(logDir, { recursive: true });
   const dateSlug = runAt.slice(0, 10);
-  const jsonPath = resolve(logDir, `${dateSlug}-hard-25-results.json`);
-  const mdPath = resolve(logDir, `${dateSlug}-hard-25-analysis.md`);
+  const jsonPath = resolve(logDir, `${dateSlug}-finance-hard-25-results.json`);
+  const mdPath = resolve(logDir, `${dateSlug}-finance-hard-25-analysis.md`);
+
+  const allModels = [...new Set(mergedResults.map((r) => r.modelId))].sort();
 
   const payload = {
     runAt,
-    models,
+    models: allModels,
     scenarios: HARD_SCENARIOS.map((s) => ({
       id: s.id,
       group: s.group,
@@ -1014,12 +1054,12 @@ async function main() {
       expectNonTransaction: s.expectNonTransaction,
       expectEntries: s.expectEntries,
     })),
-    results,
+    results: mergedResults,
     summaries,
   };
 
   writeFileSync(jsonPath, JSON.stringify(payload, null, 2));
-  writeFileSync(mdPath, buildMarkdownReport(results, summaries, runAt));
+  writeFileSync(mdPath, buildMarkdownReport(mergedResults, summaries, runAt));
 
   console.log(`\nJSON log: ${jsonPath}`);
   console.log(`Analysis: ${mdPath}`);

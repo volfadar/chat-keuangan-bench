@@ -1,7 +1,7 @@
 /**
- * Core parser + scoring + scenario suites for rupiah-bench.
+ * Core parser + scoring + scenario suites for chat-keuangan-bench.
  *
- * @see https://github.com/volfadar/rupiah-bench
+ * @see https://github.com/volfadar/chat-keuangan-bench
  */
 
 import { config } from "dotenv";
@@ -964,8 +964,8 @@ async function parseMessageViaRawOpenRouter(
     headers: {
       Authorization: `Bearer ${apiKey}`,
       "Content-Type": "application/json",
-      "HTTP-Referer": "https://github.com/rupiah-bench",
-      "X-Title": "rupiah-bench",
+      "HTTP-Referer": "https://github.com/volfadar/chat-keuangan-bench",
+      "X-Title": "chat-keuangan-bench",
     },
     body: JSON.stringify(body),
   });

@@ -1,11 +1,64 @@
-# rupiah-bench
+# chat-keuangan-bench
 
 **Open benchmark for parsing Indonesian casual finance chat into structured Rupiah transactions.**
 
-Real users don't type `{"amount": 50000}`. They send WhatsApp-style messages: slang, typos, voice corrections, patungan, `ceban`, `td malem`, `12rb 2 2 nya`. This repo measures how well LLMs extract `pemasukan` / `pengeluaran` entries from that mess.
+Real users don't type `{"amount": 50000}`. They send WhatsApp-style messages: slang, typos, voice corrections, patungan, `ceban`, `td malem`, `12rb 2 2 nya`. This repo measures how well LLMs extract `pemasukan` / `pengeluaran` entries from that mess — with quality scoring beyond pass/fail.
 
-> **Name:** `rupiah-bench` — short, memorable, domain-specific.  
-> Other names we considered: `indo-finance-parse-bench`, `chat-keuangan-eval`, `wa-rupiah-parser`, `parserupiah`. Happy to take PRs if you prefer a rename before npm publish.
+> **Repo:** [github.com/volfadar/chat-keuangan-bench](https://github.com/volfadar/chat-keuangan-bench)  
+> Former name: `rupiah-bench` (renamed for clarity — *chat keuangan* = finance chat).
+
+---
+
+## Executive report (Jun 2026)
+
+Eight models were evaluated on **25 extreme Indonesian finance-parse scenarios** (hard-25), merged with **OpenRouter activity CSV** for real cost and throughput.
+
+**FX rate used:** 1 USD = **17.905 IDR** (27 Jun 2026, ~12:50 WIB)
+
+### Visual scorecard
+
+| Strict pass | Cost per 25-run (IDR) | Latency | Quality vs speed |
+|-------------|----------------------|---------|------------------|
+| ![Strict pass](./docs/charts/strict-pass.svg) | ![Cost](./docs/charts/cost-25-idr.svg) | ![Latency](./docs/charts/latency.svg) | ![Trade-off](./docs/charts/quality-vs-latency.svg) |
+
+Full charts + tables: **[`docs/REPORT.md`](docs/REPORT.md)**
+
+### Model ranking (hard-25)
+
+| Rank | Model | Strict | Composite | Latency | $/25-run | **IDR/25-run** | Production fit |
+|------|-------|--------|-----------|---------|----------|----------------|----------------|
+| 🥇 | `google/gemini-3.1-flash-lite` | **24/25** | 99 | ~2.0s | $0.0181 | **Rp 324** | **Recommended** |
+| 🥈 | `google/gemini-3-flash-preview` | **24/25** | 99 | ~6.9s | $0.0318 | **Rp 570** | Same quality, slower & pricier |
+| 🥉 | `google/gemma-4-31b-it` | **24/25** | 98 | ~6.0s | $0.0064 | **Rp 114** | Strong; weak on qty×unit edge |
+| 4 | `z-ai/glm-4.5` | 22/25 | 98 | ~3.7s | $0.0105 | **Rp 187** | Slang + date quirks |
+| 5 | `z-ai/glm-4.7` | 22/25 | 97 | ~4.4s | $0.0092 | **Rp 165** | Same failure pattern as 4.5 |
+| 6 | `inclusionai/ling-2.6-1t` | 22/25 | 94 | ~3.2s | $0.0065 | **Rp 116** | Lower composite |
+| 7 | `openai/gpt-oss-120b` | 21/25 | 96 | **~1.3s** | $0.0070 | **Rp 125** | Fastest; 21/25 strict |
+| 8 | `deepseek/deepseek-v4-flash` | 21/25 | 97 | ~2.4s | **$0.0028** | **Rp 50** | Cheapest; 21/25 strict |
+
+### Cost at production scale (IDR)
+
+Per **single parse request** (from OpenRouter CSV averages):
+
+| Model | $/request | **IDR/request** | 1.000 msg/day | 30.000 msg/month |
+|-------|-----------|-----------------|---------------|------------------|
+| gemini-3.1-flash-lite | $0.00073 | **Rp 13** | Rp 13rb | Rp 391rb |
+| gemini-3-flash-preview | $0.00127 | **Rp 23** | Rp 23rb | Rp 690rb |
+| deepseek-v4-flash | $0.00011 | **Rp 2** | Rp 2rb | Rp 60rb |
+| gpt-oss-120b | $0.00028 | **Rp 5** | Rp 5rb | Rp 151rb |
+
+> **Value index caveat:** `deepseek-v4-flash` wins “value” only because cost is tiny; strict score is 21/25, not 24/25.
+
+### Key findings
+
+1. **Three models tie at 24/25** — `gemini-3.1-flash-lite` wins on **speed + cost** among the top tier.
+2. **All 8 models share 4 failure scenarios** — mostly **date-label semantics** (`tadi malam` → `kemarin` vs `hari_ini`) where amounts are already correct.
+3. **Don't chase 25/25 via prompt A/B** — a confirm UI in production beats burning API budget on benchmark hacking.
+4. **Legitimate wins:** datetime anchor in system prompt (`Sekarang: {date} WIB`), optional slang glossary (`ceban`=10rb), user confirmation for ambiguous dates.
+
+Details: [`docs/FINDINGS.md`](docs/FINDINGS.md) · [`docs/results/hard-25-analysis-8models.md`](docs/results/hard-25-analysis-8models.md)
+
+---
 
 ## What it tests
 
@@ -14,64 +67,45 @@ Real users don't type `{"amount": 50000}`. They send WhatsApp-style messages: sl
 | **base** (~28) | Everyday ID chat styles | Regression breadth |
 | **stress** (12) | Income direction, bulk lists, corrections | Known failure modes |
 | **hard-12** | 12 extreme edge cases | Cross-model torture test |
-| **hard-25** | 12 rewrites + 13 new angles | Harder, more varied torture test |
-| **prompt-tune** | 4 failure scenarios × prompt variants | Legitimate prompt optimization (use sparingly — costs API $) |
+| **hard-25** | 12 rewrites + 13 new angles | Primary model-selection suite |
+| **prompt-tune** | 4 failures × prompt variants | Optional — API-heavy |
 
-Scoring goes beyond pass/fail: **quality tiers** (`excellent` → `broken`), composite scores, alt-strict layouts (merged qty totals), hallucination / price-copy detection.
+Scoring: **quality tiers** (`excellent` → `broken`), composite scores, alt-strict layouts, hallucination / price-copy detection.
+
+---
 
 ## Quick start
 
 ```bash
-git clone https://github.com/volfadar/rupiah-bench.git
-cd rupiah-bench
+git clone https://github.com/volfadar/chat-keuangan-bench.git
+cd chat-keuangan-bench
 cp .env.example .env   # add OPENROUTER_API_KEY
 bun install
 
-# Full base suite (default model: gemma-4-31b-it)
+# Full base suite (default: gemma-4-31b-it)
 bun run eval
 
-# Compare models
-bun run eval -- --compare
-bun run eval -- --models google/gemini-3.1-flash-lite,google/gemini-3-flash-preview
-
-# Hard suites (recommended for model selection)
+# Hard-25 — recommended for model selection
 bun run eval:hard-25
-bun run eval:hard-12
 
-# Dry-run scenarios without API calls
-bun run eval:hard-25 -- --dry-run
+# Regenerate scorecard + charts (needs results JSON + CSV)
+bun run eval:scorecard
+bun run report
 ```
 
 Requires [Bun](https://bun.sh) and an [OpenRouter](https://openrouter.ai) API key.
 
-## Research findings (Jun 2026)
-
-Full write-up: [`docs/FINDINGS.md`](docs/FINDINGS.md). Sample reports: [`docs/results/`](docs/results/).
-
-### Model picks (hard-25, top tier)
-
-| Rank | Model | Strict | Latency | Notes |
-|------|-------|--------|---------|-------|
-| 1 | `google/gemini-3.1-flash-lite` | 24/25 | ~2s | **Recommended** — best speed/accuracy |
-| 2 | `google/gemini-3-flash-preview` | 24/25 | ~3.3s | Same score, slightly slower |
-| 3 | `google/gemma-4-31b-it` | 24/25 | ~6.8s | Strong but slow; weak on qty×unit edge |
-| 4–5 | `z-ai/glm-4.5` / `4.7` | 22/25 | 3.6–5s | Slang + relative-date quirks |
-
-The 9 failing cells across all models are **4 scenarios** — mostly date-label semantics (`tadi malam` → `kemarin` vs `hari_ini`) where **amounts are already correct**. Production should use a confirm UI, not infinite prompt A/B.
-
-### Legitimate production wins (no benchmark hacking)
-
-1. **Datetime anchor** in system prompt (`Sekarang: {date} WIB`) — fixes most relative-date misses.
-2. **Confirm UI** — user taps to fix date/amount; don't chase 100/25 via API eval spend.
-3. **Optional slang glossary** (`ceban`=10rb, `goceng`=5rb) — helps GLM; use with date rules together.
+---
 
 ## Architecture
 
 ```
-src/core/eval-core.ts   # Schema, system prompt, parser, scoring, base+stress scenarios
-scripts/eval-hard-*.ts  # Hard suite runners + quality analysis
-scripts/eval-prompt-tune.ts  # Prompt variant experiments (optional)
-src/index.ts            # Library exports
+src/core/eval-core.ts          # Schema, prompt, parser, scoring, base+stress scenarios
+scripts/eval-hard-*.ts         # Hard suite runners + quality analysis
+scripts/build-finance-model-scorecard.ts  # Merge eval JSON + CSV → scorecard
+scripts/generate-report-assets.ts         # SVG charts + docs/REPORT.md (IDR)
+docs/charts/                   # Generated visualizations
+docs/results/                  # Sample scorecard JSON + analysis
 ```
 
 ### Output schema
@@ -91,6 +125,8 @@ src/index.ts            # Library exports
 }
 ```
 
+---
+
 ## CLI reference
 
 ### Main eval (`bun run eval`)
@@ -100,9 +136,7 @@ src/index.ts            # Library exports
 | `--model <id>` | Single OpenRouter model |
 | `--models a,b` | Compare comma-separated models |
 | `--compare` | Default 2-model compare |
-| `--battle` | 4-model roster |
 | `--suite base\|stress\|all` | Scenario set |
-| `--limit N` | First N scenarios only |
 | `--dry-run` | Print scenarios, no API |
 
 ### Hard suites
@@ -110,19 +144,21 @@ src/index.ts            # Library exports
 | Flag | Description |
 |------|-------------|
 | `--model <id>` | Run one model only |
+| `--models a,b` | Comma-separated roster |
+| `--merge-from <json>` | Merge prior partial run |
 | `--dry-run` | List scenarios |
 
-### Prompt tune (⚠️ API-heavy)
+### Report generation
 
 ```bash
-bun run eval:prompt-tune -- --variant anchor-system --dry-run
+bun run report   # SVG charts + docs/REPORT.md from docs/results/scorecard.json
 ```
 
-Runs only the 4 scenarios that failed strict in hard-25. **Don't run all 10 variants × 5 models unless you have budget** — see FINDINGS.
+---
 
 ## Contributing
 
-PRs welcome: new scenarios (realistic Indonesian chat only), scoring improvements, additional models in presets. Please **don't** add scenarios that mirror few-shot examples in the system prompt.
+PRs welcome: new scenarios (realistic Indonesian chat only), scoring improvements, additional models. Please **don't** add scenarios that mirror few-shot examples in the system prompt.
 
 ## License
 
