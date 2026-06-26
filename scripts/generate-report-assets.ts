@@ -113,15 +113,18 @@ function scatterSvg(opts: {
   yLabel: string;
   yMin?: number;
   yMax?: number;
-  /** Extra X-axis span on the cheap (right) side so edge labels are not clipped */
+  /** IDR/parse tick values shown along the X axis (left = mahal, right = murah) */
+  xMetricTicks?: number[];
+  priceMin?: number;
+  priceMax?: number;
   xPadRight?: number;
   xPadLeft?: number;
   width?: number;
   height?: number;
 }): string {
   const W = opts.width ?? CHART_WIDTH;
-  const H = opts.height ?? 540;
-  const pad = { l: 72, r: 72, t: 48, b: 72 };
+  const H = opts.height ?? 560;
+  const pad = { l: 72, r: 72, t: 48, b: 88 };
   const plotW = W - pad.l - pad.r;
   const plotH = H - pad.t - pad.b;
   const dataMinX = Math.min(...opts.points.map((p) => p.x));
@@ -136,6 +139,8 @@ function scatterSvg(opts: {
   const maxY = opts.yMax ?? 100;
   const ySpan = maxY - minY || 1;
 
+  const plotX = (invertedX: number) => pad.l + ((invertedX - displayMinX) / displaySpan) * plotW;
+
   const yTicks = [minY, minY + ySpan * 0.5, maxY];
   const yGrid = yTicks
     .map((tick) => {
@@ -146,9 +151,22 @@ function scatterSvg(opts: {
     })
     .join("");
 
+  const priceMin = opts.priceMin ?? 0;
+  const priceMax = opts.priceMax ?? 1;
+  const xTicks = opts.xMetricTicks ?? [];
+  const xGrid = xTicks
+    .map((priceIdr) => {
+      const invertedX = priceMax - priceIdr + priceMin;
+      const cx = plotX(invertedX);
+      return `
+    <line x1="${cx}" y1="${pad.t}" x2="${cx}" y2="${pad.t + plotH}" stroke="#e2e8f0" stroke-dasharray="4 4"/>
+    <text x="${cx}" y="${pad.t + plotH + 20}" text-anchor="middle" class="tick">Rp\u00a0${priceIdr}</text>`;
+    })
+    .join("");
+
   const dots = opts.points
     .map((p) => {
-      const cx = pad.l + ((p.x - displayMinX) / displaySpan) * plotW;
+      const cx = plotX(p.x);
       const yClamped = Math.min(maxY, Math.max(minY, p.y));
       const cy = pad.t + plotH - ((yClamped - minY) / ySpan) * plotH;
       return `
@@ -170,12 +188,21 @@ function scatterSvg(opts: {
   <text x="12" y="22" class="title">${escapeXml(opts.title)}</text>
   <text x="${pad.l + plotW - 4}" y="${pad.t + 16}" text-anchor="end" class="ideal">ideal ↗</text>
   ${yGrid}
+  ${xGrid}
   <line x1="${pad.l}" y1="${pad.t + plotH}" x2="${pad.l + plotW}" y2="${pad.t + plotH}" stroke="#cbd5e1"/>
   <line x1="${pad.l}" y1="${pad.t}" x2="${pad.l}" y2="${pad.t + plotH}" stroke="#cbd5e1"/>
-  <text x="${pad.l + plotW / 2}" y="${H - 8}" text-anchor="middle" class="axis">${escapeXml(opts.xLabel)}</text>
+  <text x="${pad.l + plotW / 2}" y="${H - 10}" text-anchor="middle" class="axis">${escapeXml(opts.xLabel)}</text>
   <text x="18" y="${pad.t + plotH / 2}" transform="rotate(-90 18 ${pad.t + plotH / 2})" text-anchor="middle" class="axis">${escapeXml(opts.yLabel)}</text>
   ${dots}
 </svg>`;
+}
+
+/** Round IDR/parse axis ticks between min and max (left mahal → right murah). */
+function idrPriceTicks(minIdr: number, maxIdr: number): number[] {
+  const candidates = [2, 3, 5, 7, 10, 13, 15, 20, 23, 25, 30];
+  const inRange = candidates.filter((n) => n >= minIdr - 1 && n <= maxIdr + 1);
+  if (inRange.length >= 3) return inRange;
+  return [minIdr, Math.round((minIdr + maxIdr) / 2), maxIdr];
 }
 
 function escapeXml(s: string): string {
@@ -254,15 +281,17 @@ function main() {
 
   const scatterChart = scatterSvg({
     title: "Quality vs price (trade-off)",
-    xLabel: "← lebih mahal · lebih murah →",
+    xLabel: "IDR per parse ← lebih mahal · lebih murah →",
     yLabel: "Composite score (90–100)",
     yMin: 90,
     yMax: 100,
+    priceMin: minPrice,
+    priceMax: maxPrice,
+    xMetricTicks: idrPriceTicks(minPrice, maxPrice),
     points: rows.map((r, i) => {
       const priceIdr = usdToIdr(r.csvCostPerReqUsd ?? 0);
       return {
         label: r.modelId,
-        // Higher x = cheaper (top-right = best)
         x: maxPrice - priceIdr + minPrice,
         y: r.composite ?? 0,
         color: PALETTE[i % PALETTE.length]!,
