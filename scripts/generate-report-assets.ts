@@ -140,6 +140,14 @@ function scatterSvg(opts: {
   const ySpan = maxY - minY || 1;
 
   const plotX = (invertedX: number) => pad.l + ((invertedX - displayMinX) / displaySpan) * plotW;
+  const plotY = (value: number) => {
+    const yClamped = Math.min(maxY, Math.max(minY, value));
+    return pad.t + plotH - ((yClamped - minY) / ySpan) * plotH;
+  };
+
+  // Top-right = high quality + cheap (subtle highlight, not high contrast)
+  const idealQuad = `
+  <rect x="${pad.l + plotW / 2}" y="${pad.t}" width="${plotW / 2}" height="${plotH / 2}" fill="#22c55e" opacity="0.07" rx="4"/>`;
 
   const yTicks = [minY, minY + ySpan * 0.5, maxY];
   const yGrid = yTicks
@@ -167,8 +175,7 @@ function scatterSvg(opts: {
   const dots = opts.points
     .map((p) => {
       const cx = plotX(p.x);
-      const yClamped = Math.min(maxY, Math.max(minY, p.y));
-      const cy = pad.t + plotH - ((yClamped - minY) / ySpan) * plotH;
+      const cy = plotY(p.y);
       return `
     <circle cx="${cx}" cy="${cy}" r="9" fill="${p.color}" opacity="0.85"/>
     <text x="${cx}" y="${cy + 22}" text-anchor="middle" class="dot-label">${escapeXml(shortName(p.label))}</text>`;
@@ -182,11 +189,10 @@ function scatterSvg(opts: {
     .axis { font: 13px system-ui, sans-serif; fill: #64748b; }
     .tick { font: 11px system-ui, sans-serif; fill: #94a3b8; }
     .dot-label { font: 12px system-ui, sans-serif; fill: #334155; }
-    .ideal { font: 11px system-ui, sans-serif; fill: #16a34a; }
   </style>
   <rect width="100%" height="100%" fill="#fafafa"/>
   <text x="12" y="22" class="title">${escapeXml(opts.title)}</text>
-  <text x="${pad.l + plotW - 4}" y="${pad.t + 16}" text-anchor="end" class="ideal">ideal ↗</text>
+  ${idealQuad}
   ${yGrid}
   ${xGrid}
   <line x1="${pad.l}" y1="${pad.t + plotH}" x2="${pad.l + plotW}" y2="${pad.t + plotH}" stroke="#cbd5e1"/>
