@@ -68,16 +68,20 @@ Full tables + notes: **[`docs/REPORT.md`](docs/REPORT.md)**
 
 ### Cost at production scale (IDR)
 
-Per **single parse request** (from OpenRouter CSV averages):
+Per **single parse request** (from OpenRouter CSV averages, all 8 models):
 
 | Model | $/request | **IDR/request** | 1.000 msg/day | 30.000 msg/month |
 |-------|-----------|-----------------|---------------|------------------|
-| gemini-3.1-flash-lite | $0.00073 | **Rp 13** | Rp 13rb | Rp 391rb |
-| gemini-3-flash-preview | $0.00127 | **Rp 23** | Rp 23rb | Rp 690rb |
-| deepseek-v4-flash | $0.00011 | **Rp 2** | Rp 2rb | Rp 60rb |
-| gpt-oss-120b | $0.00028 | **Rp 5** | Rp 5rb | Rp 151rb |
+| `gemini-3.1-flash-lite` | $0.00073 | **Rp 13** | Rp 13rb | Rp 391rb |
+| `gemini-3-flash-preview` | $0.00127 | **Rp 23** | Rp 23rb | Rp 690rb |
+| `gemma-4-31b-it` | $0.00025 | **Rp 5** | Rp 5rb | Rp 114rb |
+| `glm-4.5` | $0.00042 | **Rp 7** | Rp 7rb | Rp 224rb |
+| `glm-4.7` | $0.00037 | **Rp 7** | Rp 7rb | Rp 198rb |
+| `ling-2.6-1t` | $0.00026 | **Rp 5** | Rp 5rb | Rp 139rb |
+| `gpt-oss-120b` | $0.00028 | **Rp 5** | Rp 5rb | Rp 151rb |
+| `deepseek-v4-flash` | $0.00011 | **Rp 2** | Rp 2rb | Rp 60rb |
 
-> **Value index caveat:** `deepseek-v4-flash` wins “value” only because cost is tiny; strict score is 21/25, not 24/25.
+> **Gemma** is ~**2.6× cheaper** per parse than gemini-3.1 at the same 24/25 tier. **Deepseek** is cheapest but 21/25 strict.
 
 ### Key findings
 
@@ -90,7 +94,7 @@ Details: [`docs/FINDINGS.md`](docs/FINDINGS.md) · [`docs/results/hard-25-analys
 
 ### SaaS pricing hint
 
-Building AI **pencatatan keuangan**? Plan **~Rp 20/parse** (gemini-3.1 + retry buffer). Keep **core manual** at Rp 49–79rb/mo; sell **AI chat as add-on** Rp 49–99rb/mo with parse caps (e.g. 100/mo), not unlimited in base. Target **AI COGS ≤ 15–20% of ARPU**. Monthly AI at scale: 1k users × 80 parses ≈ **Rp 1,6jt**; 30k parses/day ≈ **Rp 390rb** (see table above).
+Building AI **pencatatan keuangan**? Plan **~Rp 8/parse** on gemma-4 (or **~Rp 20** on gemini-3.1 + retry buffer). Keep **core manual** at Rp 49–79rb/mo; sell **AI chat as add-on** Rp 49–99rb/mo with parse caps (e.g. 100/mo), not unlimited in base. Target **AI COGS ≤ 15–20% of ARPU**. Example: 1k users × 80 parses/mo on gemma ≈ **Rp 640rb** AI COGS (vs **Rp 1,6jt** on gemini-3.1).
 
 ---
 

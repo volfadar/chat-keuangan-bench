@@ -46,7 +46,6 @@ interface CsvRow {
   model_permaslug: string;
   generation_time_ms: number;
   time_to_first_token_ms: number;
-  app_name: string;
 }
 
 interface EvalResultRow {
@@ -147,7 +146,6 @@ function loadCsv(path: string): CsvRow[] {
       model_permaslug: model,
       generation_time_ms: Number(cols[idx("generation_time_ms")] ?? 0),
       time_to_first_token_ms: Number(cols[idx("time_to_first_token_ms")] ?? 0),
-      app_name: cols[idx("app_name")] ?? "",
     });
   }
   return rows;

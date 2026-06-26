@@ -24,6 +24,7 @@
     "eval:hard-12": "bun run scripts/eval-hard-12.ts",
     "eval:hard-25": "bun run scripts/eval-hard-25.ts",
     "eval:scorecard": "bun run scripts/build-finance-model-scorecard.ts",
+    "strip-csv": "bun run scripts/strip-openrouter-csv.ts",
     "eval:prompt-tune": "bun run scripts/eval-prompt-tune.ts",
     "report": "bun run scripts/generate-report-assets.ts",
     "dry-run": "bun run src/core/eval-core.ts --dry-run --limit 5"
