@@ -8,7 +8,7 @@
   </style>
   <rect width="100%" height="100%" fill="#fafafa"/>
   <text x="16" y="28" class="title">OpenRouter throughput (completion tokens / sec)</text>
-  <text x="16" y="46" class="sub">From activity CSV — higher is better</text>
+  <text x="16" y="46" class="sub">From activity CSV — higher is better (new models: eval-run cost only)</text>
   
     <text x="8" y="77.92" class="label">gpt-oss-120b</text>
     <rect x="220" y="52" width="552" height="36" rx="4" fill="#2563eb"/>

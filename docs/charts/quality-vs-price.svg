@@ -53,8 +53,16 @@
     <text x="604.281179138322" y="207.3759999999998" text-anchor="middle" class="dot-label">glm-4.7</text>
     <circle cx="665.9591836734694" cy="288.8320000000003" r="9" fill="#0891b2" opacity="0.85"/>
     <text x="665.9591836734694" y="310.8320000000003" text-anchor="middle" class="dot-label">ling-2.6-1t</text>
-    <circle cx="665.9591836734694" cy="204.03200000000027" r="9" fill="#ca8a04" opacity="0.85"/>
+    <circle cx="696.7981859410431" cy="175.20000000000005" r="9" fill="#ca8a04" opacity="0.85"/>
+    <text x="696.7981859410431" y="197.20000000000005" text-anchor="middle" class="dot-label">mimo-v2.5-pro</text>
+    <circle cx="450.0861678004535" cy="175.20000000000005" r="9" fill="#4f46e5" opacity="0.85"/>
+    <text x="450.0861678004535" y="197.20000000000005" text-anchor="middle" class="dot-label">deepseek-v4-pro</text>
+    <circle cx="665.9591836734694" cy="204.03200000000027" r="9" fill="#0d9488" opacity="0.85"/>
     <text x="665.9591836734694" y="226.03200000000027" text-anchor="middle" class="dot-label">gpt-oss-120b</text>
-    <circle cx="758.4761904761905" cy="166.71999999999986" r="9" fill="#4f46e5" opacity="0.85"/>
+    <circle cx="758.4761904761905" cy="166.71999999999986" r="9" fill="#be185d" opacity="0.85"/>
     <text x="758.4761904761905" y="188.71999999999986" text-anchor="middle" class="dot-label">deepseek-v4-flash</text>
+    <circle cx="326.7301587301587" cy="302.4" r="9" fill="#65a30d" opacity="0.85"/>
+    <text x="326.7301587301587" y="324.4" text-anchor="middle" class="dot-label">deepseek-v4-pro@openrouter</text>
+    <circle cx="758.4761904761905" cy="472" r="9" fill="#7c3aed" opacity="0.85"/>
+    <text x="758.4761904761905" y="494" text-anchor="middle" class="dot-label">nemotron-3-nano-30b-a3b</text>
 </svg>

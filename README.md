@@ -11,13 +11,13 @@ Real users don't type `{"amount": 50000}`. They send WhatsApp-style messages: sl
 
 ## Executive report (Jun 2026)
 
-Eight models were evaluated on **25 extreme Indonesian finance-parse scenarios** (hard-25), merged with **OpenRouter activity CSV** for real cost and throughput.
+**Twelve models** evaluated on **25 extreme Indonesian finance-parse scenarios** (hard-25), merged with **OpenRouter activity CSV** for real cost and throughput (where available). Four supplemental models (Jun 27) use **eval-run costs** from live hard-25 runs.
 
 **FX rate used:** 1 USD = **17.905 IDR** (27 Jun 2026, ~12:50 WIB)
 
 ### Visual scorecard
 
-Eight models · hard-25 eval · charts at full width (not squeezed into one row).
+Twelve models · hard-25 eval · charts at full width (not squeezed into one row).
 
 #### Strict pass rate
 
@@ -57,18 +57,22 @@ Full tables + notes: **[`docs/REPORT.md`](docs/REPORT.md)**
 
 | Rank | Model | Strict | Composite | Latency | $/25-run | **IDR/25-run** | Production fit |
 |------|-------|--------|-----------|---------|----------|----------------|----------------|
-| 🥇 | `google/gemini-3.1-flash-lite` | **24/25** | 99 | ~2.0s | $0.0181 | **Rp 324** | **Recommended** |
+| 🥇 | `google/gemini-3.1-flash-lite` | **24/25** | 99 | ~2.0s | $0.0181 | **Rp 325** | Best speed among 24/25 tier |
 | 🥈 | `google/gemini-3-flash-preview` | **24/25** | 99 | ~6.9s | $0.0318 | **Rp 570** | Same quality, slower & pricier |
-| 🥉 | `google/gemma-4-31b-it` | **24/25** | 98 | ~6.0s | $0.0064 | **Rp 114** | Strong; weak on qty×unit edge |
+| 🥉 | `google/gemma-4-31b-it` | **24/25** | 98 | ~6.0s | $0.0064 | **Rp 114** | **Recommended** — best value; multimodal |
 | 4 | `z-ai/glm-4.5` | 22/25 | 98 | ~3.7s | $0.0105 | **Rp 187** | Slang + date quirks |
-| 5 | `z-ai/glm-4.7` | 22/25 | 97 | ~4.4s | $0.0092 | **Rp 165** | Same failure pattern as 4.5 |
-| 6 | `inclusionai/ling-2.6-1t` | 22/25 | 94 | ~3.2s | $0.0065 | **Rp 116** | Lower composite |
-| 7 | `openai/gpt-oss-120b` | 21/25 | 96 | **~1.3s** | $0.0070 | **Rp 125** | Fastest; 21/25 strict |
-| 8 | `deepseek/deepseek-v4-flash` | 21/25 | 97 | ~2.4s | **$0.0028** | **Rp 50** | Cheapest; 21/25 strict |
+| 5 | `xiaomi/mimo-v2.5-pro` | 22/25 | 97 | ~6.0s | $0.0057 | **Rp 101** | Xiaomi OR provider; qty-split weak |
+| 6 | `deepseek/deepseek-v4-pro` | 22/25 | 97 | ~2.4s | $0.0162 | **Rp 291** | Direct API (not OpenRouter) |
+| 7 | `z-ai/glm-4.7` | 22/25 | 97 | ~4.4s | $0.0092 | **Rp 165** | Same failure pattern as 4.5 |
+| 8 | `inclusionai/ling-2.6-1t` | 22/25 | 94 | ~3.2s | $0.0065 | **Rp 116** | Lower composite |
+| 9 | `openai/gpt-oss-120b` | 21/25 | 96 | **~1.3s** | $0.0070 | **Rp 126** | Fastest; 21/25 strict |
+| 10 | `deepseek/deepseek-v4-flash` | 21/25 | 97 | ~2.4s | **$0.0028** | **Rp 50** | Cheapest useful model |
+| 11 | `deepseek/deepseek-v4-pro@openrouter` | 19/25 | 94 | ~2.8s | $0.0217 | **Rp 388** | OR → Baidu; worse than direct |
+| 12 | `nvidia/nemotron-3-nano-30b-a3b` | 15/25 | 90 | ~2.8s | $0.0026 | **Rp 46** | Cheap probe only |
 
 ### Cost at production scale (IDR)
 
-Per **single parse request** (from OpenRouter CSV averages, all 8 models):
+Per **single parse request** (OpenRouter CSV where available; Jun 27 models from eval-run):
 
 | Model | $/request | **IDR/request** | 1.000 msg/day | 30.000 msg/month |
 |-------|-----------|-----------------|---------------|------------------|
@@ -78,19 +82,24 @@ Per **single parse request** (from OpenRouter CSV averages, all 8 models):
 | `glm-4.5` | $0.00042 | **Rp 7** | Rp 7rb | Rp 224rb |
 | `glm-4.7` | $0.00037 | **Rp 7** | Rp 7rb | Rp 198rb |
 | `ling-2.6-1t` | $0.00026 | **Rp 5** | Rp 5rb | Rp 139rb |
+| `mimo-v2.5-pro` | $0.00023 | **Rp 4** | Rp 4rb | Rp 121rb |
+| `deepseek-v4-pro` (direct) | $0.00065 | **Rp 12** | Rp 12rb | Rp 349rb |
 | `gpt-oss-120b` | $0.00028 | **Rp 5** | Rp 5rb | Rp 151rb |
 | `deepseek-v4-flash` | $0.00011 | **Rp 2** | Rp 2rb | Rp 60rb |
+| `deepseek-v4-pro@openrouter` | $0.00087 | **Rp 16** | Rp 16rb | Rp 466rb |
+| `nemotron-3-nano-30b-a3b` | $0.00010 | **Rp 2** | Rp 2rb | Rp 56rb |
 
-> **Gemma** is ~**2.6× cheaper** per parse than gemini-3.1 at the same 24/25 tier. **Deepseek** is cheapest but 21/25 strict.
+> **Gemma** is ~**2.6× cheaper** per parse than gemini-3.1 at the same 24/25 tier. **Deepseek v4 Pro**: use **direct API** (22/25), not OpenRouter Baidu fallback (19/25). **Nemotron** is cheapest but only 15/25.
 
 ### Key findings
 
-1. **Three models tie at 24/25** — `gemini-3.1-flash-lite` wins on **speed + cost** among the top tier.
-2. **All 8 models share 4 failure scenarios** — mostly **date-label semantics** (`tadi malam` → `kemarin` vs `hari_ini`) where amounts are already correct.
-3. **Don't chase 25/25 via prompt A/B** — a confirm UI in production beats burning API budget on benchmark hacking.
-4. **Legitimate wins:** datetime anchor in system prompt (`Sekarang: {date} WIB`), optional slang glossary (`ceban`=10rb), user confirmation for ambiguous dates.
+1. **Three models tie at 24/25** — **`gemma-4-31b-it`** wins on **value + multimodal**; `gemini-3.1-flash-lite` wins on **latency** among the top tier.
+2. **Jun 27 supplements:** MiMo v2.5 Pro (22/25, Rp 101/25-run), DeepSeek v4 Pro direct (22/25), Nemotron Nano (15/25 — not production-ready).
+3. **DeepSeek v4 Pro:** direct `api.deepseek.com` beats OpenRouter default routing (Baidu host, 19/25). Official OR `deepseek` provider blocked on our account privacy policy.
+4. **Shared failure mode at 22/25:** qty×unit line-split (`cilok`, `SPP 3 anak`, `daging 2kg`) — models collapse multiple units into one entry.
+5. **Don't chase 25/25 via prompt A/B** — confirm UI beats benchmark hacking.
 
-Details: [`docs/FINDINGS.md`](docs/FINDINGS.md) · [`docs/results/hard-25-analysis-8models.md`](docs/results/hard-25-analysis-8models.md)
+Details: [`docs/FINDINGS.md`](docs/FINDINGS.md) · [`docs/results/hard-25-analysis-8models.md`](docs/results/hard-25-analysis-8models.md) · [`docs/results/hard-25-supplement-jun27.md`](docs/results/hard-25-supplement-jun27.md)
 
 ### SaaS pricing hint
 

@@ -1,6 +1,6 @@
 {
   "name": "chat-keuangan-bench",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "Open benchmark for parsing Indonesian casual finance chat (WhatsApp-style) into structured Rupiah transactions via LLMs",
   "type": "module",
   "license": "MIT",

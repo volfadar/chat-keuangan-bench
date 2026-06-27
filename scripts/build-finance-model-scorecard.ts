@@ -23,6 +23,10 @@ const ALL_EVAL_MODELS = [
   "openai/gpt-oss-120b",
   "inclusionai/ling-2.6-1t",
   "deepseek/deepseek-v4-flash",
+  "xiaomi/mimo-v2.5-pro",
+  "nvidia/nemotron-3-nano-30b-a3b",
+  "deepseek/deepseek-v4-pro",
+  "deepseek/deepseek-v4-pro@openrouter",
 ] as const;
 
 const SCENARIO_COUNT = 25;
@@ -56,6 +60,31 @@ interface EvalResultRow {
   error: string | null;
 }
 
+interface EvalCostStats {
+  avgCostUsd: number;
+  estCost25RunUsd: number;
+  source: string;
+}
+
+interface SingleModelResultRow {
+  scenarioId: string;
+  strictPass: boolean;
+  ms: number;
+  costUsd: number;
+  error: string | null;
+}
+
+interface SingleModelPayload {
+  runAt: string;
+  model?: string;
+  label?: string;
+  backend?: string;
+  results: SingleModelResultRow[];
+  avgCostUsd?: number;
+  totalCostUsd?: number;
+  avgMs?: number;
+}
+
 interface EvalPayload {
   runAt: string;
   models: string[];
@@ -68,6 +97,61 @@ interface EvalPayload {
     tierCounts: Record<string, number>;
     errors: number;
   }>;
+}
+
+function resolveSingleModelId(data: SingleModelPayload): string {
+  const label = data.label ?? "";
+  if (label.includes("deepseek-v4-pro-direct") || data.backend === "deepseek-direct") {
+    return "deepseek/deepseek-v4-pro";
+  }
+  if (label.includes("deepseek-v4-pro-or") || label.includes("or-default")) {
+    return "deepseek/deepseek-v4-pro@openrouter";
+  }
+  if (data.model?.startsWith("deepseek-v4-pro")) return "deepseek/deepseek-v4-pro";
+  return data.model ?? label;
+}
+
+function compositeForRow(strictPass: boolean): { compositeScore: number; tier: string } {
+  if (strictPass) return { compositeScore: 100, tier: "excellent" };
+  return { compositeScore: 75, tier: "usable_with_edit" };
+}
+
+function convertSingleModelPayload(data: SingleModelPayload): {
+  rows: EvalResultRow[];
+  costStats: EvalCostStats;
+  modelId: string;
+} {
+  const modelId = resolveSingleModelId(data);
+  const okRows = data.results.filter((r) => !r.error);
+  const avgCost =
+    data.avgCostUsd ??
+    (okRows.length ? okRows.reduce((s, r) => s + r.costUsd, 0) / okRows.length : 0);
+  const rows: EvalResultRow[] = data.results.map((r) => {
+    const q = compositeForRow(r.strictPass);
+    return {
+      modelId,
+      scenarioId: r.scenarioId,
+      ms: r.ms,
+      quality: r.error
+        ? null
+        : { strictPass: r.strictPass, compositeScore: q.compositeScore, tier: q.tier },
+      error: r.error,
+    };
+  });
+  return {
+    rows,
+    modelId,
+    costStats: {
+      avgCostUsd: avgCost,
+      estCost25RunUsd: data.totalCostUsd ?? avgCost * SCENARIO_COUNT,
+      source: "eval-run",
+    },
+  };
+}
+
+function isSingleModelPayload(data: unknown): data is SingleModelPayload {
+  const d = data as SingleModelPayload;
+  return Array.isArray(d.results) && d.results.length > 0 && "strictPass" in d.results[0]!;
 }
 
 interface ModelCsvStats {
@@ -108,6 +192,9 @@ function normalizeModelSlug(permaslug: string): string | null {
   if (s.includes("gpt-oss-120b")) return "openai/gpt-oss-120b";
   if (s.includes("ling-2.6")) return "inclusionai/ling-2.6-1t";
   if (s.includes("deepseek-v4-flash")) return "deepseek/deepseek-v4-flash";
+  if (s.includes("deepseek-v4-pro")) return "deepseek/deepseek-v4-pro";
+  if (s.includes("mimo-v2.5")) return "xiaomi/mimo-v2.5-pro";
+  if (s.includes("nemotron-3-nano")) return "nvidia/nemotron-3-nano-30b-a3b";
   return null;
 }
 
@@ -190,13 +277,28 @@ function aggregateCsv(rows: CsvRow[]): Map<string, ModelCsvStats> {
   return out;
 }
 
-function mergeEvalPayloads(paths: string[]): EvalPayload {
+function mergeEvalPayloads(
+  paths: string[],
+): { payload: EvalPayload; evalCosts: Map<string, EvalCostStats> } {
   const byKey = new Map<string, EvalResultRow>();
   const models = new Set<string>();
+  const evalCosts = new Map<string, EvalCostStats>();
   let runAt = "";
 
   for (const p of paths) {
-    const data = JSON.parse(readFileSync(p, "utf8")) as EvalPayload;
+    const raw = JSON.parse(readFileSync(p, "utf8")) as unknown;
+    if (isSingleModelPayload(raw)) {
+      const { rows, modelId, costStats } = convertSingleModelPayload(raw);
+      runAt = raw.runAt || runAt;
+      models.add(modelId);
+      evalCosts.set(modelId, costStats);
+      for (const r of rows) {
+        byKey.set(`${r.modelId}::${r.scenarioId}`, r);
+      }
+      continue;
+    }
+
+    const data = raw as EvalPayload;
     runAt = data.runAt || runAt;
     for (const r of data.results) {
       byKey.set(`${r.modelId}::${r.scenarioId}`, r);
@@ -224,7 +326,7 @@ function mergeEvalPayloads(paths: string[]): EvalPayload {
     };
   });
 
-  return { runAt, models: [...models], results, summaries };
+  return { payload: { runAt, models: [...models], results, summaries }, evalCosts };
 }
 
 function parseArgs(argv: string[]) {
@@ -240,7 +342,14 @@ function parseArgs(argv: string[]) {
   }
 
   if (results.length === 0) {
-    results.push(resolve(outDir, "2026-06-26-finance-hard-25-results.json"));
+    const runsDir = resolve(outDir, "runs");
+    results.push(
+      resolve(outDir, "2026-06-26-finance-hard-25-results.json"),
+      resolve(runsDir, "2026-06-27-mimo-v25-pro-xiaomi-results.json"),
+      resolve(runsDir, "2026-06-27-nemotron-nano-30b-default-results.json"),
+      resolve(runsDir, "2026-06-27-deepseek-v4-pro-direct-results.json"),
+      resolve(runsDir, "2026-06-27-deepseek-v4-pro-or-default-results.json"),
+    );
   }
   return { results, csv, outDir };
 }
@@ -340,17 +449,19 @@ function main() {
   const { results: resultPaths, csv, outDir } = parseArgs(process.argv);
   const csvRows = loadCsv(csv);
   const csvStats = aggregateCsv(csvRows);
-  const evalPayload = mergeEvalPayloads(resultPaths);
+  const { payload: evalPayload, evalCosts } = mergeEvalPayloads(resultPaths);
 
   const evalByModel = new Map(evalPayload.summaries.map((s) => [s.modelId, s]));
 
   const scorecard: ScorecardRow[] = ALL_EVAL_MODELS.map((modelId) => {
     const e = evalByModel.get(modelId);
     const c = csvStats.get(modelId);
+    const ec = evalCosts.get(modelId);
     const strict = e?.strictPass ?? null;
     const composite = e?.meanComposite ?? null;
     const strictPct = strict != null ? (strict / SCENARIO_COUNT) * 100 : null;
-    const estCost25 = c?.estCost25RunUsd ?? null;
+    const costPerReq = c?.avgCostUsd ?? ec?.avgCostUsd ?? null;
+    const estCost25 = c?.estCost25RunUsd ?? ec?.estCost25RunUsd ?? null;
     const valueIndex =
       strictPct != null && composite != null && estCost25 != null && estCost25 > 0
         ? (strictPct + composite) / estCost25
@@ -364,7 +475,7 @@ function main() {
       evalMeanMs: e?.meanMs ?? null,
       csvAvgGenMs: c?.avgGenMs ?? null,
       csvAvgTtftMs: c?.avgTtftMs ?? null,
-      csvCostPerReqUsd: c?.avgCostUsd ?? null,
+      csvCostPerReqUsd: costPerReq,
       estCost25Usd: estCost25,
       throughputTps: c?.throughputTps ?? null,
       valueIndex,
@@ -380,10 +491,16 @@ function main() {
   const jsonPath = resolve(outDir, `${dateSlug}-finance-model-scorecard.json`);
 
   writeFileSync(mdPath, md);
-  writeFileSync(
-    jsonPath,
-    JSON.stringify({ generatedAt: new Date().toISOString(), csvPath: csv, evalSources: resultPaths, scorecard, csvStats: Object.fromEntries(csvStats) }, null, 2),
-  );
+  const scorecardJson = {
+    generatedAt: new Date().toISOString(),
+    csvPath: csv,
+    evalSources: resultPaths,
+    scorecard,
+    csvStats: Object.fromEntries(csvStats),
+    evalCosts: Object.fromEntries(evalCosts),
+  };
+  writeFileSync(jsonPath, JSON.stringify(scorecardJson, null, 2));
+  writeFileSync(resolve(outDir, "scorecard.json"), JSON.stringify(scorecardJson, null, 2));
 
   console.log(`Scorecard: ${mdPath}`);
   console.log(`JSON: ${jsonPath}`);

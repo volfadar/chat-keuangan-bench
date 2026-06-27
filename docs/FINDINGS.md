@@ -12,70 +12,63 @@ Pick an LLM that parses Indonesian casual finance messages (WhatsApp / voice tra
 2. **Hard-12** — 12 extreme edge cases targeting known failures (qty ambiguity, COD phantom income, price copy, patungan, curhat).
 3. **Hard-25** — rewrote all 12 + added 13 new angles (typos, `k` suffix, future intent, slang, emoji noise, 5-line rekap).
 4. **Quality scoring** — strict pass + composite tier (`excellent` … `broken`), not binary pass/fail.
-5. **Prompt tune (partial)** — retested 4 failure scenarios with legitimate prompt variants (datetime anchor, slang glossary). Stopped early — diminishing ROI vs API cost.
+5. **Jun 27 supplement** — MiMo v2.5 Pro, Nemotron 3 Nano, DeepSeek v4 Pro (direct + OpenRouter).
 
-## Top models (hard-25, 5-model roster)
+## Top models (hard-25, 12-model roster)
 
-| Model | Strict | Composite | Latency |
-|-------|--------|-----------|---------|
-| `google/gemini-3.1-flash-lite` | 24/25 | 99 | ~2.0s |
-| `google/gemini-3-flash-preview` | 24/25 | 99 | ~3.3s |
-| `google/gemma-4-31b-it` | 24/25 | 98 | ~6.8s |
-| `z-ai/glm-4.5` | 22/25 | 98 | ~3.6s |
-| `z-ai/glm-4.7` | 22/25 | 97 | ~5.0s |
+| Model | Strict | Composite | Latency | IDR/25-run |
+|-------|--------|-----------|---------|------------|
+| `google/gemini-3.1-flash-lite` | 24/25 | 99 | ~2.0s | Rp 325 |
+| `google/gemini-3-flash-preview` | 24/25 | 99 | ~6.9s | Rp 570 |
+| `google/gemma-4-31b-it` | 24/25 | 98 | ~6.0s | **Rp 114** |
+| `xiaomi/mimo-v2.5-pro` | 22/25 | 97 | ~6.0s | Rp 101 |
+| `deepseek/deepseek-v4-pro` (direct) | 22/25 | 97 | ~2.4s | Rp 291 |
+| `z-ai/glm-4.5` / `4.7` | 22/25 | 97–98 | ~3.7–4.4s | Rp 165–187 |
+| `deepseek/deepseek-v4-flash` | 21/25 | 97 | ~2.4s | **Rp 50** |
+| `nvidia/nemotron-3-nano-30b-a3b` | 15/25 | 90 | ~2.8s | Rp 46 |
 
-**Recommendation:** `gemini-3.1-flash-lite` for production (best speed + accuracy).  
-**Runner-up:** `gemini-3-flash-preview` if you want to stay in Gemini but avoid the "lite" SKU.
+**Recommendation:** **`google/gemma-4-31b-it`** for production — 24/25 strict, lowest cost among top tier, multimodal for receipt OCR. Use **`gemini-3.1-flash-lite`** when latency matters more than cost.
 
-## The only 4 scenarios anyone failed
+**DeepSeek v4 Pro:** route via **`api.deepseek.com`**, not OpenRouter (Baidu fallback scored 19/25).
+
+## The only 4 scenarios anyone failed (original 8-model run)
 
 | ID | Issue | Real defect? |
 |----|-------|--------------|
-| `hard-sep-wifi-token` | `td malem` → models said `kemarin`, rubric expects `hari_ini` | **Debatable** — amounts 350k + 102.5k always correct |
-| `hard-voice-ojek-correct` | GLM: `tadi pagi` → `kemarin` | Date label only; 35rb amount correct |
-| `hard-slang-ceban-goceng` | GLM: read ceban/goceng as 100/500 or merged | **Yes** — slang decode failure |
-| `hard-cilok-qty-44` | Gemma: `5rb 4 4 nya` → 1×5rb not 4×5rb | **Yes** — qty collapse (others merge to 20rb correctly) |
+| `hard-sep-wifi-token` | `td malem` → models said `kemarin`, rubric expects `hari_ini` | **Debatable** — amounts correct |
+| `hard-voice-ojek-correct` | GLM: `tadi pagi` → `kemarin` | Date label only |
+| `hard-slang-ceban-goceng` | GLM: slang decode | **Yes** |
+| `hard-cilok-qty-44` | Gemma: qty collapse | **Yes** — alt layout 1×20rb accepted |
 
-96% strict on a 25-scenario torture suite is **production-ready** with a confirm step.
+## Qty-split cluster (22/25 ceiling)
+
+MiMo, DeepSeek v4 Pro, GLM, Ling share failures on:
+
+- `hard-cilok-qty-44`
+- `hard-td-spp-3anak`
+- `hard-daging-2kg`
+
+Models merge N×unit price into one line instead of N entries.
 
 ## Prompt optimization (what worked / didn't)
 
-From partial prompt-tune runs (~110 API calls, 5 of 10 variants):
-
 | Variant | Effect |
 |---------|--------|
-| **Datetime anchor** (`Sekarang: {date} WIB` in system) | Fixed wifi-token + ojek date on Gemini/GLM — **best ROI** |
-| **Date-expanded rules** | Similar to anchor alone |
-| **Slang glossary** | Fixed GLM ceban/goceng but **broke** date parsing when used alone |
-| **Qty rules + few-shot** | Marginal; Gemma cilok still failed |
-
-**Do not:** embed test inputs/expected JSON in prompts, run 200+ variant matrix calls, or chase 25/25 via prompt stuffing.
+| **Datetime anchor** (`Sekarang: {date} WIB`) | Fixed wifi-token + ojek date — **best ROI** |
+| **Slang glossary** | Fixed GLM ceban/goceng but broke dates when used alone |
+| **Qty rules + few-shot** | Marginal on cilok |
 
 ## Production checklist
 
-- [ ] Model: `google/gemini-3.1-flash-lite` (or `gemini-3-flash-preview`)
-- [ ] Append dynamic datetime anchor to system prompt each request
+- [ ] Model: `google/gemma-4-31b-it` (value) or `gemini-3.1-flash-lite` (speed)
+- [ ] DeepSeek v4 Pro: `DEEPSEEK_API_KEY` + direct API only
+- [ ] Append dynamic datetime anchor each request
 - [ ] Confirm UI for amount + date before save
-- [ ] Optional: slang glossary in prompt if you see GLM-class models
-- [ ] Accept merged qty totals (1×20rb) as valid UX — don't force 4 line items
-
-## Scenario design principles
-
-Good scenarios are:
-
-- Copied from real Indonesian chat patterns (typos, `td`, patungan, voice correction chains)
-- Adversarial but **realistic** — not synthetic JSON-in-prompt traps
-- Scored with alternate valid layouts (4×45rb zakat vs 1×180rb)
-
-Bad scenarios / hacks:
-
-- Matching few-shot examples in the system prompt
-- Expecting exact `deskripsi` wording
-- Penalizing linguistically valid `kemarin` for `tadi malam` without confirm UI
+- [ ] Accept merged qty totals (1×20rb) as valid UX
 
 ## Files
 
-- `docs/results/hard-25-analysis.md` — full per-model breakdown (sample run)
-- `docs/results/hard-12-analysis.md` — earlier 12-scenario run
-
-Re-run to regenerate fresh timestamps under `docs/results/`.
+- `docs/results/scorecard.json` — merged 12-model scorecard
+- `docs/results/hard-25-supplement-jun27.md` — Jun 27 eval notes
+- `docs/results/runs/*.json` — raw supplemental eval logs
+- `docs/REPORT.md` — charts + master table

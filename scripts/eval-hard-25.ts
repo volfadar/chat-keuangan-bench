@@ -23,7 +23,7 @@ import {
   type ExpectedEntry,
   type ParsedFinance,
   type Scenario,
-} from "./eval-gemma-finance-parse.ts";
+} from "../src/core/eval-core.ts";
 
 // Full roster from all finance-parse eval sessions (hard-12 + hard-25 + battle).
 export const ALL_EVAL_MODELS = [

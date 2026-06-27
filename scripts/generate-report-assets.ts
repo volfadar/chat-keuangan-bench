@@ -231,7 +231,8 @@ function chartEmbedMd(relPath: string, title: string, caption?: string): string[
 
 const PALETTE = [
   "#2563eb", "#16a34a", "#dc2626", "#9333ea", "#ea580c",
-  "#0891b2", "#ca8a04", "#4f46e5",
+  "#0891b2", "#ca8a04", "#4f46e5", "#0d9488", "#be185d",
+  "#65a30d", "#7c3aed",
 ];
 
 function main() {
@@ -305,10 +306,11 @@ function main() {
     }),
   });
 
+  const throughputRows = rows.filter((r) => (r.throughputTps ?? 0) > 0);
   const throughputChart = barChartSvg({
     title: "OpenRouter throughput (completion tokens / sec)",
-    unit: "From activity CSV — higher is better",
-    rows: [...rows]
+    unit: "From activity CSV — higher is better (new models: eval-run cost only)",
+    rows: [...throughputRows]
       .sort((a, b) => (b.throughputTps ?? 0) - (a.throughputTps ?? 0))
       .map((r, i) => ({
         label: shortName(r.modelId),
@@ -354,16 +356,25 @@ function main() {
     );
   }
 
+  const topQ = [...rows].sort((a, b) => (b.strict ?? 0) - (a.strict ?? 0) || (b.composite ?? 0) - (a.composite ?? 0))[0]!;
+  const gemma = rows.find((r) => r.modelId.includes("gemma-4-31b"));
+  const cheapest = [...rows]
+    .filter((r) => r.estCost25Usd != null)
+    .sort((a, b) => (a.estCost25Usd ?? 9e9) - (b.estCost25Usd ?? 9e9))[0]!;
+  const fastest = [...rows].sort((a, b) => (a.evalMeanMs ?? 9e9) - (b.evalMeanMs ?? 9e9))[0]!;
+
   reportLines.push(
     ``,
     `## Recommendations`,
     ``,
     `| Use case | Model | Why |`,
     `|----------|-------|-----|`,
-    `| **Production (best overall)** | \`gemini-3.1-flash-lite\` | 24/25 strict, ~2s, acceptable cost (~${fmtIdrShort(usdToIdr(0.0181))}/25-run) |`,
-    `| **Quality tie, slower** | \`gemini-3-flash-preview\` | Same 24/25, higher cost (~${fmtIdrShort(usdToIdr(0.0318))}/25-run) |`,
-    `| **Fastest** | \`gpt-oss-120b\` | ~1.3s/scenario, 282 t/s — 21/25 strict |`,
-    `| **Cheapest** | \`deepseek-v4-flash\` | ~${fmtIdrShort(usdToIdr(0.0028))}/25-run — 21/25 strict |`,
+    `| **Best quality (24/25)** | \`${shortName(topQ.modelId)}\` | Top strict + composite among evaluated models |`,
+    `| **Best value (24/25 tier)** | \`gemma-4-31b-it\` | 24/25 strict at ~${fmtIdrShort(usdToIdr(gemma?.estCost25Usd ?? 0.0064))}/25-run — multimodal-ready |`,
+    `| **Fastest** | \`${shortName(fastest.modelId)}\` | ~${Math.round(fastest.evalMeanMs ?? 0)}ms/scenario |`,
+    `| **Cheapest strict-quality** | \`deepseek-v4-flash\` | ~${fmtIdrShort(usdToIdr(cheapest.estCost25Usd ?? 0))}/25-run — 21/25 strict |`,
+    `| **DeepSeek v4 Pro** | \`deepseek-v4-pro\` (direct API) | 22/25 — prefer api.deepseek.com over OpenRouter Baidu route (19/25) |`,
+    `| **Avoid for production** | \`nemotron-3-nano-30b-a3b\` | 15/25 — cheap but weak on temporal + qty split |`,
     ``,
     `> Per-message inference at scale: multiply **IDR/request** by your daily message volume.`,
   );
