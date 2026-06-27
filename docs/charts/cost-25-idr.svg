@@ -40,7 +40,7 @@
     <text x="8" y="509.92" class="label">gemini-3.1-flash-lite</text>
     <rect x="220" y="484" width="315.2899824253075" height="36" rx="4" fill="#be185d"/>
     <text x="780" y="509.92" class="value">Rp 325</text>
-    <text x="8" y="557.92" class="label">deepseek-v4-pro@openrouter</text>
+    <text x="8" y="557.92" class="label">deepseek-v4-pro (OR)</text>
     <rect x="220" y="532" width="376.40773286467487" height="36" rx="4" fill="#65a30d"/>
     <text x="780" y="557.92" class="value">Rp 388</text>
     <text x="8" y="605.92" class="label">gemini-3-flash-preview</text>

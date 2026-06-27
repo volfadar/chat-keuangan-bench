@@ -1,5 +1,7 @@
 # Hard-25 supplement — Jun 27, 2026
 
+> **Full 12-model scoreboard:** [`hard-25-analysis-12models.md`](./hard-25-analysis-12models.md)
+
 Four additional models evaluated on the same **25-scenario hard-25 suite**. Raw JSON in `docs/results/runs/`.
 
 **FX:** 1 USD = 17.905 IDR

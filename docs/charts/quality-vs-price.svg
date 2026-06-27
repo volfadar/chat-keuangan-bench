@@ -62,7 +62,7 @@
     <circle cx="758.4761904761905" cy="166.71999999999986" r="9" fill="#be185d" opacity="0.85"/>
     <text x="758.4761904761905" y="188.71999999999986" text-anchor="middle" class="dot-label">deepseek-v4-flash</text>
     <circle cx="326.7301587301587" cy="302.4" r="9" fill="#65a30d" opacity="0.85"/>
-    <text x="326.7301587301587" y="324.4" text-anchor="middle" class="dot-label">deepseek-v4-pro@openrouter</text>
+    <text x="326.7301587301587" y="324.4" text-anchor="middle" class="dot-label">deepseek-v4-pro (OR)</text>
     <circle cx="758.4761904761905" cy="472" r="9" fill="#7c3aed" opacity="0.85"/>
     <text x="758.4761904761905" y="494" text-anchor="middle" class="dot-label">nemotron-3-nano-30b-a3b</text>
 </svg>

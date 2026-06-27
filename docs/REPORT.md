@@ -1,7 +1,7 @@
 # Model comparison report
 
 Generated from hard-25 eval + OpenRouter activity CSV.
-**FX:** 1 USD = **17.905 IDR** (27 Jun 2026, ~12:50 WIB)
+**12 models** evaluated · **FX:** 1 USD = **17.905 IDR** (27 Jun 2026)
 
 ## Visual summary
 
@@ -57,18 +57,21 @@ Ideal quadrant: **top-right** (high composite, cheapest → right). Y-axis zoome
 | deepseek-v4-pro | 22/25 | 97 | 2404ms | $0.0162 | Rp 291 | $0.00065 | Rp 12 |
 | gpt-oss-120b | 21/25 | 96 | 1253ms | $0.0070 | Rp 126 | $0.00028 | Rp 5 |
 | deepseek-v4-flash | 21/25 | 97 | 2385ms | $0.0028 | Rp 50 | $0.00011 | Rp 2 |
-| deepseek-v4-pro@openrouter | 19/25 | 94 | 2828ms | $0.0217 | Rp 388 | $0.00087 | Rp 16 |
+| deepseek-v4-pro (OR) | 19/25 | 94 | 2828ms | $0.0217 | Rp 388 | $0.00087 | Rp 16 |
 | nemotron-3-nano-30b-a3b | 15/25 | 90 | 2791ms | $0.0026 | Rp 46 | $0.00010 | Rp 2 |
 
 ## Recommendations
 
 | Use case | Model | Why |
 |----------|-------|-----|
-| **Best quality (24/25)** | `gemini-3.1-flash-lite` | Top strict + composite among evaluated models |
-| **Best value (24/25 tier)** | `gemma-4-31b-it` | 24/25 strict at ~Rp 114/25-run — multimodal-ready |
-| **Fastest** | `gpt-oss-120b` | ~1253ms/scenario |
-| **Cheapest strict-quality** | `deepseek-v4-flash` | ~Rp 46/25-run — 21/25 strict |
-| **DeepSeek v4 Pro** | `deepseek-v4-pro` (direct API) | 22/25 — prefer api.deepseek.com over OpenRouter Baidu route (19/25) |
-| **Avoid for production** | `nemotron-3-nano-30b-a3b` | 15/25 — cheap but weak on temporal + qty split |
+| **Production (recommended)** | `gemma-4-31b-it` | 24/25 strict, ~Rp 114/25-run, multimodal |
+| **Best latency (24/25)** | `gemini-3.1-flash-lite` | ~2s/scenario, 24/25 strict |
+| **Fastest overall** | `gpt-oss-120b` | ~1253ms/scenario |
+| **Cheapest ≥21/25** | `deepseek-v4-flash` | 21/25 at ~Rp 50/25-run |
+| **DeepSeek v4 Pro** | `deepseek-v4-pro` (direct API) | 22/25 — not OpenRouter Baidu (19/25) |
+| **Supplement: MiMo** | `mimo-v2.5-pro` | 22/25, Rp 101/25-run via Xiaomi OR provider |
+| **Avoid** | `nemotron-3-nano-30b-a3b` | 15/25 — probe only |
 
 > Per-message inference at scale: multiply **IDR/request** by your daily message volume.
+
+See also: [hard-25-analysis-12models.md](./results/hard-25-analysis-12models.md) · [hard-25-supplement-jun27.md](./results/hard-25-supplement-jun27.md)

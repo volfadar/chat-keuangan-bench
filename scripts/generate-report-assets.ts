@@ -10,9 +10,9 @@
 
 import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { resolve } from "node:path";
+import { ALL_EVAL_MODELS, USD_TO_IDR, shortModelName } from "../src/core/model-roster.ts";
 
-/** 1 USD = 17,905 IDR — 27 Jun 2026 ~12:50 WIB */
-export const USD_TO_IDR = 17_905;
+export { USD_TO_IDR, shortModelName as shortName } from "../src/core/model-roster.ts";
 
 export function usdToIdr(usd: number): number {
   return Math.round(usd * USD_TO_IDR);
@@ -44,7 +44,7 @@ interface ScorecardPayload {
 }
 
 function shortName(modelId: string): string {
-  return modelId.split("/").pop() ?? modelId;
+  return shortModelName(modelId);
 }
 
 function parseArgs(argv: string[]) {
@@ -331,7 +331,7 @@ function main() {
     `# Model comparison report`,
     ``,
     `Generated from hard-25 eval + OpenRouter activity CSV.`,
-    `**FX:** 1 USD = **${USD_TO_IDR.toLocaleString("id-ID")} IDR** (27 Jun 2026, ~12:50 WIB)`,
+    `**${ALL_EVAL_MODELS.length} models** evaluated · **FX:** 1 USD = **${USD_TO_IDR.toLocaleString("id-ID")} IDR** (27 Jun 2026)`,
     ``,
     `## Visual summary`,
     ``,
@@ -357,11 +357,12 @@ function main() {
   }
 
   const topQ = [...rows].sort((a, b) => (b.strict ?? 0) - (a.strict ?? 0) || (b.composite ?? 0) - (a.composite ?? 0))[0]!;
-  const gemma = rows.find((r) => r.modelId.includes("gemma-4-31b"));
-  const cheapest = [...rows]
-    .filter((r) => r.estCost25Usd != null)
-    .sort((a, b) => (a.estCost25Usd ?? 9e9) - (b.estCost25Usd ?? 9e9))[0]!;
+  const gemma = rows.find((r) => r.modelId === "google/gemma-4-31b-it");
   const fastest = [...rows].sort((a, b) => (a.evalMeanMs ?? 9e9) - (b.evalMeanMs ?? 9e9))[0]!;
+  const cheapest21 = [...rows]
+    .filter((r) => (r.strict ?? 0) >= 21)
+    .sort((a, b) => (a.estCost25Usd ?? 9e9) - (b.estCost25Usd ?? 9e9))[0]!;
+  const dsFlash = rows.find((r) => r.modelId === "deepseek/deepseek-v4-flash");
 
   reportLines.push(
     ``,
@@ -369,14 +370,17 @@ function main() {
     ``,
     `| Use case | Model | Why |`,
     `|----------|-------|-----|`,
-    `| **Best quality (24/25)** | \`${shortName(topQ.modelId)}\` | Top strict + composite among evaluated models |`,
-    `| **Best value (24/25 tier)** | \`gemma-4-31b-it\` | 24/25 strict at ~${fmtIdrShort(usdToIdr(gemma?.estCost25Usd ?? 0.0064))}/25-run — multimodal-ready |`,
-    `| **Fastest** | \`${shortName(fastest.modelId)}\` | ~${Math.round(fastest.evalMeanMs ?? 0)}ms/scenario |`,
-    `| **Cheapest strict-quality** | \`deepseek-v4-flash\` | ~${fmtIdrShort(usdToIdr(cheapest.estCost25Usd ?? 0))}/25-run — 21/25 strict |`,
-    `| **DeepSeek v4 Pro** | \`deepseek-v4-pro\` (direct API) | 22/25 — prefer api.deepseek.com over OpenRouter Baidu route (19/25) |`,
-    `| **Avoid for production** | \`nemotron-3-nano-30b-a3b\` | 15/25 — cheap but weak on temporal + qty split |`,
+    `| **Production (recommended)** | \`gemma-4-31b-it\` | 24/25 strict, ~${fmtIdrShort(usdToIdr(gemma?.estCost25Usd ?? 0.0064))}/25-run, multimodal |`,
+    `| **Best latency (24/25)** | \`gemini-3.1-flash-lite\` | ~2s/scenario, 24/25 strict |`,
+    `| **Fastest overall** | \`${shortName(fastest.modelId)}\` | ~${Math.round(fastest.evalMeanMs ?? 0)}ms/scenario |`,
+    `| **Cheapest ≥21/25** | \`${shortName(cheapest21?.modelId ?? "deepseek-v4-flash")}\` | ${cheapest21?.strict ?? 21}/25 at ~${fmtIdrShort(usdToIdr(cheapest21?.estCost25Usd ?? dsFlash?.estCost25Usd ?? 0))}/25-run |`,
+    `| **DeepSeek v4 Pro** | \`deepseek-v4-pro\` (direct API) | 22/25 — not OpenRouter Baidu (19/25) |`,
+    `| **Supplement: MiMo** | \`mimo-v2.5-pro\` | 22/25, Rp 101/25-run via Xiaomi OR provider |`,
+    `| **Avoid** | \`nemotron-3-nano-30b-a3b\` | 15/25 — probe only |`,
     ``,
     `> Per-message inference at scale: multiply **IDR/request** by your daily message volume.`,
+    ``,
+    `See also: [hard-25-analysis-12models.md](./results/hard-25-analysis-12models.md) · [hard-25-supplement-jun27.md](./results/hard-25-supplement-jun27.md)`,
   );
 
   const reportDir = resolve(import.meta.dirname, "../docs");

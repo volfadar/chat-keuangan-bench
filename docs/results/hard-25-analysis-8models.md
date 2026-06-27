@@ -1,4 +1,6 @@
-# Finance Parse Hard-25 Eval — 2026-06-26T17:46:56.912Z
+# Finance Parse Hard-25 Eval — 2026-06-26 (legacy)
+
+> **Superseded by:** [`hard-25-analysis-12models.md`](./hard-25-analysis-12models.md) (12 models, Jun 27 update)
 
 25 extreme-but-realistic scenarios (12 rewrites + 13 new angles) × 8 models.
 
@@ -15,7 +17,9 @@
 
 ## Recommendation
 
-**Top pick: `google/gemini-3.1-flash-lite`** — 24/25 strict, composite 99, ~1955ms.
+**Legacy note:** This run predates the Jun 27 supplement. For current guidance see **`google/gemma-4-31b-it`** (production) or **`gemini-3.1-flash-lite`** (latency).
+
+**Top pick in this 8-model run:** `google/gemini-3.1-flash-lite` — 24/25 strict, composite 99, ~1955ms.
 
 ## Scoreboard
 

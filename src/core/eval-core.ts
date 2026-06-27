@@ -94,6 +94,19 @@ const MODEL_PRESETS: Record<string, ModelPreset> = {
     label: "ling-2.6-1t @ OpenRouter (reasoning off)",
     reasoning: { effort: "none", exclude: true },
   },
+  "xiaomi/mimo-v2.5-pro": {
+    label: "mimo-v2.5-pro @ OpenRouter Xiaomi fp8 (reasoning off)",
+    reasoning: { effort: "none", exclude: true },
+    openrouterProvider: { only: ["xiaomi/fp8"], allow_fallbacks: false },
+  },
+  "nvidia/nemotron-3-nano-30b-a3b": {
+    label: "nemotron-3-nano-30b-a3b @ OpenRouter (reasoning off)",
+    reasoning: { effort: "none", exclude: true },
+  },
+  "deepseek/deepseek-v4-pro@openrouter": {
+    label: "deepseek-v4-pro @ OpenRouter default routing (reasoning off)",
+    reasoning: { effort: "none", exclude: true },
+  },
 };
 
 export const financeParseSchema = z.object({
@@ -243,7 +256,7 @@ function extractJsonBlock(text: string): string | null {
   return trimmed.match(/\{[\s\S]*\}/)?.[0] ?? null;
 }
 
-function parseFinanceJson(text: string): ParsedFinance {
+export function parseFinanceJson(text: string): ParsedFinance {
   const block = extractJsonBlock(text);
   if (!block) throw new Error("No JSON block in model response");
   const raw: unknown = JSON.parse(block);

@@ -99,7 +99,7 @@ Per **single parse request** (OpenRouter CSV where available; Jun 27 models from
 4. **Shared failure mode at 22/25:** qty×unit line-split (`cilok`, `SPP 3 anak`, `daging 2kg`) — models collapse multiple units into one entry.
 5. **Don't chase 25/25 via prompt A/B** — confirm UI beats benchmark hacking.
 
-Details: [`docs/FINDINGS.md`](docs/FINDINGS.md) · [`docs/results/hard-25-analysis-8models.md`](docs/results/hard-25-analysis-8models.md) · [`docs/results/hard-25-supplement-jun27.md`](docs/results/hard-25-supplement-jun27.md)
+Details: [`docs/FINDINGS.md`](docs/FINDINGS.md) · [`docs/results/hard-25-analysis-12models.md`](docs/results/hard-25-analysis-12models.md) · [`docs/results/hard-25-supplement-jun27.md`](docs/results/hard-25-supplement-jun27.md) · [legacy 8-model analysis](docs/results/hard-25-analysis-8models.md)
 
 ### SaaS pricing hint
 
@@ -179,33 +179,63 @@ sore tadi:
 ```bash
 git clone https://github.com/volfadar/chat-keuangan-bench.git
 cd chat-keuangan-bench
-cp .env.example .env   # add OPENROUTER_API_KEY
+cp .env.example .env   # OPENROUTER_API_KEY (+ DEEPSEEK_API_KEY for v4 Pro direct)
 bun install
 
 # Full base suite (default: gemma-4-31b-it)
 bun run eval
 
-# Hard-25 — recommended for model selection
+# Hard-25 — all 12 models (expensive)
 bun run eval:hard-25
 
-# Regenerate scorecard + charts (needs results JSON + CSV)
-bun run eval:scorecard
-bun run report
+# Hard-25 — single model / provider
+bun run eval:single -- --model xiaomi/mimo-v2.5-pro --provider xiaomi/fp8
+bun run eval:single -- --direct-deepseek
+
+# Regenerate scorecard + charts + analysis
+bun run bench:refresh
 ```
 
-Requires [Bun](https://bun.sh) and an [OpenRouter](https://openrouter.ai) API key.
+Requires [Bun](https://bun.sh), [OpenRouter](https://openrouter.ai) API key, and optionally [DeepSeek](https://platform.deepseek.com) for `deepseek-v4-pro` direct.
+
+### Model roster (12)
+
+| Model | Route | Notes |
+|-------|-------|-------|
+| `google/gemma-4-31b-it` | OpenRouter | **Recommended** — 24/25, multimodal |
+| `google/gemini-3.1-flash-lite` | OpenRouter | 24/25, fastest top tier |
+| `google/gemini-3-flash-preview` | OpenRouter | 24/25, pricier |
+| `z-ai/glm-4.5` / `4.7` | OpenRouter | 22/25 |
+| `inclusionai/ling-2.6-1t` | OpenRouter | 22/25 |
+| `openai/gpt-oss-120b` | OpenRouter → Groq | 21/25, fastest |
+| `deepseek/deepseek-v4-flash` | OpenRouter | 21/25, cheapest useful |
+| `xiaomi/mimo-v2.5-pro` | OpenRouter → `xiaomi/fp8` | 22/25 |
+| `deepseek/deepseek-v4-pro` | **Direct API** | 22/25 — use `DEEPSEEK_API_KEY` |
+| `deepseek/deepseek-v4-pro@openrouter` | OR → Baidu | 19/25 — not recommended |
+| `nvidia/nemotron-3-nano-30b-a3b` | OpenRouter | 15/25 — probe only |
+
+Canonical list: `src/core/model-roster.ts`
 
 ---
 
 ## Architecture
 
 ```
-src/core/eval-core.ts          # Schema, prompt, parser, scoring, base+stress scenarios
-scripts/eval-hard-*.ts         # Hard suite runners + quality analysis
-scripts/build-finance-model-scorecard.ts  # Merge eval JSON + CSV → scorecard
-scripts/generate-report-assets.ts         # SVG charts + docs/REPORT.md (IDR)
-docs/charts/                   # Generated visualizations
-docs/results/                  # Sample scorecard JSON + analysis
+src/core/
+  eval-core.ts                 # Schema, prompt, parser, scoring, base+stress scenarios
+  model-roster.ts              # Canonical 12-model list + USD_TO_IDR
+scripts/
+  eval-hard-*.ts               # Hard suite runners
+  eval-hard-25-single.ts       # Single-model hard-25 (OR provider / DeepSeek direct)
+  build-finance-model-scorecard.ts
+  generate-report-assets.ts    # SVG charts + docs/REPORT.md
+  generate-hard-25-analysis.ts # docs/results/hard-25-analysis-12models.md
+docs/
+  charts/                      # Generated visualizations
+  results/
+    scorecard.json             # Merged 12-model scorecard
+    runs/                      # Per-model eval JSON (Jun 27 supplement)
+    hard-25-analysis-12models.md
 ```
 
 ### Output schema
@@ -248,10 +278,23 @@ docs/results/                  # Sample scorecard JSON + analysis
 | `--merge-from <json>` | Merge prior partial run |
 | `--dry-run` | List scenarios |
 
+### Single-model hard-25 (`bun run eval:single`)
+
+| Flag | Description |
+|------|-------------|
+| `--model <id>` | OpenRouter model slug |
+| `--provider <slug>` | Lock OpenRouter provider (e.g. `xiaomi/fp8`, `deepseek`) |
+| `--direct-deepseek` | Route via `api.deepseek.com` (`DEEPSEEK_API_KEY`) |
+| `--label <name>` | Output filename slug under `docs/results/runs/` |
+
 ### Report generation
 
 ```bash
-bun run report   # SVG charts + docs/REPORT.md from docs/results/scorecard.json
+bun run bench:refresh   # scorecard + charts + analysis markdown
+# or individually:
+bun run eval:scorecard
+bun run report
+bun run analysis
 ```
 
 ---

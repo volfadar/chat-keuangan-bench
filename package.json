@@ -1,6 +1,6 @@
 {
   "name": "chat-keuangan-bench",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "description": "Open benchmark for parsing Indonesian casual finance chat (WhatsApp-style) into structured Rupiah transactions via LLMs",
   "type": "module",
   "license": "MIT",
@@ -23,10 +23,13 @@
     "eval": "bun run src/core/eval-core.ts",
     "eval:hard-12": "bun run scripts/eval-hard-12.ts",
     "eval:hard-25": "bun run scripts/eval-hard-25.ts",
+    "eval:single": "bun run scripts/eval-hard-25-single.ts",
     "eval:scorecard": "bun run scripts/build-finance-model-scorecard.ts",
     "strip-csv": "bun run scripts/strip-openrouter-csv.ts",
     "eval:prompt-tune": "bun run scripts/eval-prompt-tune.ts",
     "report": "bun run scripts/generate-report-assets.ts",
+    "analysis": "bun run scripts/generate-hard-25-analysis.ts",
+    "bench:refresh": "bun run eval:scorecard && bun run report && bun run analysis",
     "dry-run": "bun run src/core/eval-core.ts --dry-run --limit 5"
   },
   "dependencies": {

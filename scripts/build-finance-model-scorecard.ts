@@ -13,26 +13,9 @@
 
 import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { resolve } from "node:path";
-
-const ALL_EVAL_MODELS = [
-  "google/gemini-3.1-flash-lite",
-  "google/gemini-3-flash-preview",
-  "google/gemma-4-31b-it",
-  "z-ai/glm-4.5",
-  "z-ai/glm-4.7",
-  "openai/gpt-oss-120b",
-  "inclusionai/ling-2.6-1t",
-  "deepseek/deepseek-v4-flash",
-  "xiaomi/mimo-v2.5-pro",
-  "nvidia/nemotron-3-nano-30b-a3b",
-  "deepseek/deepseek-v4-pro",
-  "deepseek/deepseek-v4-pro@openrouter",
-] as const;
+import { ALL_EVAL_MODELS, USD_TO_IDR, shortModelName } from "../src/core/model-roster.ts";
 
 const SCENARIO_COUNT = 25;
-
-/** 1 USD = 17,905 IDR — 27 Jun 2026 ~12:50 WIB */
-const USD_TO_IDR = 17_905;
 
 function usdToIdr(usd: number): number {
   return Math.round(usd * USD_TO_IDR);
@@ -368,17 +351,21 @@ function buildMarkdown(rows: ScorecardRow[], csvStats: Map<string, ModelCsvStats
   const withEval = ranked.filter((r) => r.inEval && r.strict != null);
   if (withEval[0]) {
     const bestQ = [...withEval].sort((a, b) => (b.strict ?? 0) - (a.strict ?? 0) || (b.composite ?? 0) - (a.composite ?? 0))[0]!;
-    const bestV = ranked.find((r) => r.inEval && r.valueIndex != null) ?? bestQ;
+    const best24 = [...withEval]
+      .filter((r) => (r.strict ?? 0) >= 24)
+      .sort((a, b) => (a.estCost25Usd ?? 9e9) - (b.estCost25Usd ?? 9e9))[0];
+    const gemma = withEval.find((r) => r.modelId === "google/gemma-4-31b-it");
     const fastest = [...withEval].sort((a, b) => (a.evalMeanMs ?? 9e9) - (b.evalMeanMs ?? 9e9))[0]!;
-    const cheapest = [...withEval]
-      .filter((r) => r.estCost25Usd != null)
+    const cheapestUseful = [...withEval]
+      .filter((r) => (r.strict ?? 0) >= 21)
       .sort((a, b) => (a.estCost25Usd ?? 9e9) - (b.estCost25Usd ?? 9e9))[0]!;
 
     lines.push(
       `- **Best quality (hard-25):** \`${bestQ.modelId}\` — ${bestQ.strict}/${SCENARIO_COUNT} strict, composite ${bestQ.composite?.toFixed(0)}`,
-      `- **Best value (quality ÷ cost):** \`${bestV.modelId}\` — value index ${bestV.valueIndex?.toFixed(1)}`,
+      `- **Best value at 24/25:** \`${best24?.modelId ?? "google/gemma-4-31b-it"}\` — ${best24?.strict ?? 24}/${SCENARIO_COUNT} strict, ~${fmtIdr(best24?.estCost25Usd ?? gemma?.estCost25Usd)}/25-run`,
+      `- **Recommended production:** \`google/gemma-4-31b-it\` — 24/25, multimodal, ~${fmtIdr(gemma?.estCost25Usd)}/25-run`,
       `- **Fastest eval latency:** \`${fastest.modelId}\` — ~${fastest.evalMeanMs?.toFixed(0)}ms/scenario`,
-      `- **Cheapest 25-run est.:** \`${cheapest.modelId}\` — ~$${cheapest.estCost25Usd?.toFixed(4)} (${fmtIdr(cheapest.estCost25Usd)})`,
+      `- **Cheapest ≥21/25:** \`${cheapestUseful.modelId}\` — ${cheapestUseful.strict}/${SCENARIO_COUNT} strict, ~${fmtIdr(cheapestUseful.estCost25Usd)}/25-run`,
       `- **FX rate:** 1 USD = ${USD_TO_IDR.toLocaleString("id-ID")} IDR (27 Jun 2026)`,
       "",
     );

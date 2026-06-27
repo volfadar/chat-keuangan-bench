@@ -6,7 +6,7 @@
  * decimals, money slang (ceban/goceng), spelled amounts, future intent vs past, refund
  * income, discount net price, cancelled purchase, per-kg qty, emoji/WA noise, 5-item rekap.
  *
- * Runs all 8 models from prior finance-parse eval sessions (see ALL_EVAL_MODELS).
+ * Runs all 12 models in the canonical roster (see src/core/model-roster.ts).
  *
  * Run:
  *   bun run apps/ai/scripts/eval-finance-hard-25.ts
@@ -24,18 +24,9 @@ import {
   type ParsedFinance,
   type Scenario,
 } from "../src/core/eval-core.ts";
+import { ALL_EVAL_MODELS } from "../src/core/model-roster.ts";
 
-// Full roster from all finance-parse eval sessions (hard-12 + hard-25 + battle).
-export const ALL_EVAL_MODELS = [
-  "google/gemini-3.1-flash-lite",
-  "google/gemini-3-flash-preview",
-  "google/gemma-4-31b-it",
-  "z-ai/glm-4.5",
-  "z-ai/glm-4.7",
-  "openai/gpt-oss-120b",
-  "inclusionai/ling-2.6-1t",
-  "deepseek/deepseek-v4-flash",
-] as const;
+export { ALL_EVAL_MODELS };
 
 type AltStrictRule =
   | { kind: "qtyMerge"; keyword: string; unit: number; count: number }
@@ -56,7 +47,7 @@ type HardScenario = Scenario & {
   priceCopyCheck?: boolean;
 };
 
-const HARD_SCENARIOS: HardScenario[] = [
+export const HARD_SCENARIOS: HardScenario[] = [
   // ─── 1–12: rewrites of hard-12 (same test aspect, new wording) ──────────────
   {
     id: "hard-cilok-qty-44",
@@ -1065,7 +1056,9 @@ async function main() {
   console.log(`Analysis: ${mdPath}`);
 }
 
-main().catch((err) => {
-  console.error("FATAL:", err);
-  process.exit(1);
-});
+if (import.meta.main) {
+  main().catch((err) => {
+    console.error("FATAL:", err);
+    process.exit(1);
+  });
+}

@@ -1,13 +1,14 @@
-# Finance Parse Model Scorecard — 2026-06-27T15:55:32.618Z
+# Finance Parse Model Scorecard — 2026-06-27T16:03:29.286Z
 
 Merged eval runs + OpenRouter CSV. **12/12** models in eval JSON.
 
 ## Executive summary
 
 - **Best quality (hard-25):** `google/gemini-3.1-flash-lite` — 24/25 strict, composite 99
-- **Best value (quality ÷ cost):** `deepseek/deepseek-v4-flash` — value index 65176.6
+- **Best value at 24/25:** `google/gemma-4-31b-it` — 24/25 strict, ~Rp 114/25-run
+- **Recommended production:** `google/gemma-4-31b-it` — 24/25, multimodal, ~Rp 114/25-run
 - **Fastest eval latency:** `openai/gpt-oss-120b` — ~1253ms/scenario
-- **Cheapest 25-run est.:** `nvidia/nemotron-3-nano-30b-a3b` — ~$0.0026 (Rp 46)
+- **Cheapest ≥21/25:** `deepseek/deepseek-v4-flash` — 21/25 strict, ~Rp 50/25-run
 - **FX rate:** 1 USD = 17.905 IDR (27 Jun 2026)
 
 ## Master scorecard
