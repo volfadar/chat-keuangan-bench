@@ -169,7 +169,7 @@ function main() {
     "",
   );
 
-  const outPath = resolve(import.meta.dirname, "../docs/results/hard-25-analysis-12models.md");
+  const outPath = resolve(import.meta.dirname, "../docs/results/hard-25-analysis.md");
   writeFileSync(outPath, lines.join("\n"));
   console.log(`Wrote ${outPath}`);
 }

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 660" width="960" height="660">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 708" width="960" height="708">
   <style>
     .title { font: 600 18px system-ui, sans-serif; fill: #0f172a; }
     .label { font: 14px system-ui, sans-serif; fill: #334155; }
@@ -43,7 +43,10 @@
     <text x="8" y="557.92" class="label">deepseek-v4-pro (OR)</text>
     <rect x="220" y="532" width="419.52" height="36" rx="4" fill="#65a30d"/>
     <text x="780" y="557.92" class="value">19/25</text>
-    <text x="8" y="605.92" class="label">nemotron-3-nano-30b-a3b</text>
-    <rect x="220" y="580" width="331.2" height="36" rx="4" fill="#7c3aed"/>
-    <text x="780" y="605.92" class="value">15/25</text>
+    <text x="8" y="605.92" class="label">glm-4.7-flash</text>
+    <rect x="220" y="580" width="375.36" height="36" rx="4" fill="#7c3aed"/>
+    <text x="780" y="605.92" class="value">17/25</text>
+    <text x="8" y="653.92" class="label">nemotron-3-nano-30b-a3b</text>
+    <rect x="220" y="628" width="331.2" height="36" rx="4" fill="#2563eb"/>
+    <text x="780" y="653.92" class="value">15/25</text>
 </svg>

@@ -68,6 +68,10 @@ const MODEL_PRESETS: Record<string, ModelPreset> = {
     label: "glm-4.7 @ OpenRouter (reasoning off)",
     reasoning: { effort: "none", exclude: true },
   },
+  "z-ai/glm-4.7-flash": {
+    label: "glm-4.7-flash @ OpenRouter (reasoning off)",
+    reasoning: { effort: "none", exclude: true },
+  },
   "google/gemini-3-flash-preview": {
     label: "gemini-3-flash-preview @ OpenRouter (reasoning minimal)",
     reasoning: { effort: "none", exclude: true },

@@ -380,7 +380,7 @@ function main() {
     ``,
     `> Per-message inference at scale: multiply **IDR/request** by your daily message volume.`,
     ``,
-    `See also: [hard-25-analysis-12models.md](./results/hard-25-analysis-12models.md) · [hard-25-supplement-jun27.md](./results/hard-25-supplement-jun27.md)`,
+    `See also: [hard-25-analysis.md](./results/hard-25-analysis.md) · [hard-25-supplement-jun27.md](./results/hard-25-supplement-jun27.md)`,
   );
 
   const reportDir = resolve(import.meta.dirname, "../docs");

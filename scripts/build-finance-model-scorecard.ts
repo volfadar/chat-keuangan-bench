@@ -11,7 +11,7 @@
  *     --csv docs/research/openrouter_activity_2026-06-26.csv
  */
 
-import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
+import { mkdirSync, readFileSync, readdirSync, writeFileSync } from "node:fs";
 import { resolve } from "node:path";
 import { ALL_EVAL_MODELS, USD_TO_IDR, shortModelName } from "../src/core/model-roster.ts";
 
@@ -171,6 +171,7 @@ function normalizeModelSlug(permaslug: string): string | null {
   if (s.includes("gemini-3-flash-preview")) return "google/gemini-3-flash-preview";
   if (s.includes("gemma-4-31b")) return "google/gemma-4-31b-it";
   if (s.includes("glm-4.5")) return "z-ai/glm-4.5";
+  if (s.includes("glm-4.7-flash")) return "z-ai/glm-4.7-flash";
   if (s.includes("glm-4.7")) return "z-ai/glm-4.7";
   if (s.includes("gpt-oss-120b")) return "openai/gpt-oss-120b";
   if (s.includes("ling-2.6")) return "inclusionai/ling-2.6-1t";
@@ -326,13 +327,11 @@ function parseArgs(argv: string[]) {
 
   if (results.length === 0) {
     const runsDir = resolve(outDir, "runs");
-    results.push(
-      resolve(outDir, "2026-06-26-finance-hard-25-results.json"),
-      resolve(runsDir, "2026-06-27-mimo-v25-pro-xiaomi-results.json"),
-      resolve(runsDir, "2026-06-27-nemotron-nano-30b-default-results.json"),
-      resolve(runsDir, "2026-06-27-deepseek-v4-pro-direct-results.json"),
-      resolve(runsDir, "2026-06-27-deepseek-v4-pro-or-default-results.json"),
-    );
+    const runFiles = readdirSync(runsDir)
+      .filter((f) => f.endsWith("-results.json"))
+      .sort()
+      .map((f) => resolve(runsDir, f));
+    results.push(resolve(outDir, "2026-06-26-finance-hard-25-results.json"), ...runFiles);
   }
   return { results, csv, outDir };
 }

@@ -1,7 +1,7 @@
 # Model comparison report
 
 Generated from hard-25 eval + OpenRouter activity CSV.
-**12 models** evaluated · **FX:** 1 USD = **17.905 IDR** (27 Jun 2026)
+**13 models** evaluated · **FX:** 1 USD = **17.905 IDR** (27 Jun 2026)
 
 ## Visual summary
 
@@ -58,6 +58,7 @@ Ideal quadrant: **top-right** (high composite, cheapest → right). Y-axis zoome
 | gpt-oss-120b | 21/25 | 96 | 1253ms | $0.0070 | Rp 126 | $0.00028 | Rp 5 |
 | deepseek-v4-flash | 21/25 | 97 | 2385ms | $0.0028 | Rp 50 | $0.00011 | Rp 2 |
 | deepseek-v4-pro (OR) | 19/25 | 94 | 2828ms | $0.0217 | Rp 388 | $0.00087 | Rp 16 |
+| glm-4.7-flash | 17/25 | 92 | 2745ms | $0.0022 | Rp 39 | $0.00009 | Rp 2 |
 | nemotron-3-nano-30b-a3b | 15/25 | 90 | 2791ms | $0.0026 | Rp 46 | $0.00010 | Rp 2 |
 
 ## Recommendations
@@ -74,4 +75,4 @@ Ideal quadrant: **top-right** (high composite, cheapest → right). Y-axis zoome
 
 > Per-message inference at scale: multiply **IDR/request** by your daily message volume.
 
-See also: [hard-25-analysis-12models.md](./results/hard-25-analysis-12models.md) · [hard-25-supplement-jun27.md](./results/hard-25-supplement-jun27.md)
+See also: [hard-25-analysis.md](./results/hard-25-analysis.md) · [hard-25-supplement-jun27.md](./results/hard-25-supplement-jun27.md)

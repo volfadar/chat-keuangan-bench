@@ -1,6 +1,6 @@
 # Finance Parse Hard-25 Eval — 2026-06-26 (legacy)
 
-> **Superseded by:** [`hard-25-analysis-12models.md`](./hard-25-analysis-12models.md) (12 models, Jun 27 update)
+> **Superseded by:** [`hard-25-analysis.md`](./hard-25-analysis.md)
 
 25 extreme-but-realistic scenarios (12 rewrites + 13 new angles) × 8 models.
 

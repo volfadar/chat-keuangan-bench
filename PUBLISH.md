@@ -12,7 +12,7 @@ git push origin main
 
 - [ ] Copy `.env.example` → `.env` locally only (never commit `.env`)
 - [ ] After new eval runs: `bun run bench:refresh` (scorecard + charts + analysis)
-- [ ] Verify `docs/results/scorecard.json` and `hard-25-analysis-12models.md` updated
+- [ ] Verify `docs/results/scorecard.json` and `hard-25-analysis.md` updated
 - [ ] Supplement runs go in `docs/results/runs/` (tracked in git)
 
 ## Repo layout (v0.3+)
@@ -20,7 +20,7 @@ git push origin main
 | Artifact | Purpose |
 |----------|---------|
 | `docs/results/scorecard.json` | Merged 12-model metrics |
-| `docs/results/hard-25-analysis-12models.md` | Full per-model failure analysis |
+| `docs/results/hard-25-analysis.md` | Full per-model failure analysis |
 | `docs/results/runs/*.json` | Raw single-model eval logs |
 | `docs/charts/*.svg` | README / REPORT visuals |
 | `src/core/model-roster.ts` | Canonical model list |

@@ -1,6 +1,6 @@
-# Finance Parse Model Scorecard — 2026-06-27T16:03:29.286Z
+# Finance Parse Model Scorecard — 2026-06-27T16:43:14.663Z
 
-Merged eval runs + OpenRouter CSV. **12/12** models in eval JSON.
+Merged eval runs + OpenRouter CSV. **13/13** models in eval JSON.
 
 ## Executive summary
 
@@ -15,6 +15,7 @@ Merged eval runs + OpenRouter CSV. **12/12** models in eval JSON.
 
 | Model | Strict | Comp | Eval ms | $/req | IDR/req | $/25-run | IDR/25-run | tok/s | Value† |
 |-------|--------|------|---------|-------|---------|----------|------------|-------|--------|
+| z-ai/glm-4.7-flash | 17/25 | 92 | 2745 | $0.00009 | Rp 2 | $0.0022 | Rp 39 | — | 74393.7 |
 | deepseek/deepseek-v4-flash | 21/25 | 97 | 2385 | $0.00011 | Rp 2 | $0.0028 | Rp 50 | 75.0 | 65176.6 |
 | nvidia/nemotron-3-nano-30b-a3b | 15/25 | 90 | 2791 | $0.00010 | Rp 2 | $0.0026 | Rp 46 | — | 57773.2 |
 | xiaomi/mimo-v2.5-pro | 22/25 | 97 | 5983 | $0.00023 | Rp 4 | $0.0057 | Rp 101 | — | 32729.3 |
@@ -66,11 +67,11 @@ _All roster models present._
 - Strict: **22/25**, composite **96.8**
 - Failed: hard-voice-ojek-correct, hard-sep-wifi-token, hard-slang-ceban-goceng
 
-### xiaomi/mimo-v2.5-pro
+### deepseek/deepseek-v4-pro
 - Strict: **22/25**, composite **97.0**
 - Failed: hard-cilok-qty-44, hard-td-spp-3anak, hard-daging-2kg
 
-### deepseek/deepseek-v4-pro
+### xiaomi/mimo-v2.5-pro
 - Strict: **22/25**, composite **97.0**
 - Failed: hard-cilok-qty-44, hard-td-spp-3anak, hard-daging-2kg
 
@@ -85,6 +86,10 @@ _All roster models present._
 ### deepseek/deepseek-v4-pro@openrouter
 - Strict: **19/25**, composite **94.0**
 - Failed: hard-cilok-qty-44, hard-cod-jnt-tip, hard-alfamart-price-copy, hard-td-spp-3anak, hard-listrik-cashback-mixed, hard-daging-2kg
+
+### z-ai/glm-4.7-flash
+- Strict: **17/25**, composite **92.0**
+- Failed: hard-cilok-qty-44, hard-bonus-cair-gopay, hard-td-spp-3anak, hard-sep-wifi-token, hard-refund-tokopedia, hard-slang-ceban-goceng, hard-spelled-setengah-juta, hard-daging-2kg
 
 ### nvidia/nemotron-3-nano-30b-a3b
 - Strict: **15/25**, composite **90.0**

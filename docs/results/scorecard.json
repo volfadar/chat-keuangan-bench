@@ -1,12 +1,13 @@
 {
-  "generatedAt": "2026-06-27T16:03:29.298Z",
+  "generatedAt": "2026-06-27T16:43:14.675Z",
   "csvPath": "/root/rupiah-bench/docs/data/openrouter_activity_2026-06-26.csv",
   "evalSources": [
     "/root/rupiah-bench/docs/results/2026-06-26-finance-hard-25-results.json",
-    "/root/rupiah-bench/docs/results/runs/2026-06-27-mimo-v25-pro-xiaomi-results.json",
-    "/root/rupiah-bench/docs/results/runs/2026-06-27-nemotron-nano-30b-default-results.json",
     "/root/rupiah-bench/docs/results/runs/2026-06-27-deepseek-v4-pro-direct-results.json",
-    "/root/rupiah-bench/docs/results/runs/2026-06-27-deepseek-v4-pro-or-default-results.json"
+    "/root/rupiah-bench/docs/results/runs/2026-06-27-deepseek-v4-pro-or-default-results.json",
+    "/root/rupiah-bench/docs/results/runs/2026-06-27-glm-47-flash-default-results.json",
+    "/root/rupiah-bench/docs/results/runs/2026-06-27-mimo-v25-pro-xiaomi-results.json",
+    "/root/rupiah-bench/docs/results/runs/2026-06-27-nemotron-nano-30b-default-results.json"
   ],
   "scorecard": [
     {
@@ -82,6 +83,21 @@
       "throughputTps": 25.35854523680223,
       "valueIndex": 20018.91340499581,
       "tierExcellent": 22,
+      "errors": 0
+    },
+    {
+      "modelId": "z-ai/glm-4.7-flash",
+      "inEval": true,
+      "strict": 17,
+      "composite": 92,
+      "evalMeanMs": 2745.16,
+      "csvAvgGenMs": null,
+      "csvAvgTtftMs": null,
+      "csvCostPerReqUsd": 0.0000860288,
+      "estCost25Usd": 0.00215072,
+      "throughputTps": null,
+      "valueIndex": 74393.69141496801,
+      "tierExcellent": 17,
       "errors": 0
     },
     {
@@ -281,16 +297,6 @@
     }
   },
   "evalCosts": {
-    "xiaomi/mimo-v2.5-pro": {
-      "avgCostUsd": 0.00022609732799999994,
-      "estCost25RunUsd": 0.0056524331999999984,
-      "source": "eval-run"
-    },
-    "nvidia/nemotron-3-nano-30b-a3b": {
-      "avgCostUsd": 0.00010385439999999997,
-      "estCost25RunUsd": 0.0025963599999999994,
-      "source": "eval-run"
-    },
     "deepseek/deepseek-v4-pro": {
       "avgCostUsd": 0.0006496115999999999,
       "estCost25RunUsd": 0.016240289999999998,
@@ -299,6 +305,21 @@
     "deepseek/deepseek-v4-pro@openrouter": {
       "avgCostUsd": 0.00086601042,
       "estCost25RunUsd": 0.0216502605,
+      "source": "eval-run"
+    },
+    "z-ai/glm-4.7-flash": {
+      "avgCostUsd": 0.0000860288,
+      "estCost25RunUsd": 0.00215072,
+      "source": "eval-run"
+    },
+    "xiaomi/mimo-v2.5-pro": {
+      "avgCostUsd": 0.00022609732799999994,
+      "estCost25RunUsd": 0.0056524331999999984,
+      "source": "eval-run"
+    },
+    "nvidia/nemotron-3-nano-30b-a3b": {
+      "avgCostUsd": 0.00010385439999999997,
+      "estCost25RunUsd": 0.0025963599999999994,
       "source": "eval-run"
     }
   }

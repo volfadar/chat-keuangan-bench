@@ -24,6 +24,7 @@ Pick an LLM that parses Indonesian casual finance messages (WhatsApp / voice tra
 | `xiaomi/mimo-v2.5-pro` | 22/25 | 97 | ~6.0s | Rp 101 |
 | `deepseek/deepseek-v4-pro` (direct) | 22/25 | 97 | ~2.4s | Rp 291 |
 | `z-ai/glm-4.5` / `4.7` | 22/25 | 97–98 | ~3.7–4.4s | Rp 165–187 |
+| `z-ai/glm-4.7-flash` | **17/25** | 92 | ~2.7s | **Rp 39** |
 | `deepseek/deepseek-v4-flash` | 21/25 | 97 | ~2.4s | **Rp 50** |
 | `nvidia/nemotron-3-nano-30b-a3b` | 15/25 | 90 | ~2.8s | Rp 46 |
 

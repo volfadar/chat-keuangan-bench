@@ -9,6 +9,7 @@ export const ALL_EVAL_MODELS = [
   "google/gemma-4-31b-it",
   "z-ai/glm-4.5",
   "z-ai/glm-4.7",
+  "z-ai/glm-4.7-flash",
   "openai/gpt-oss-120b",
   "inclusionai/ling-2.6-1t",
   "deepseek/deepseek-v4-flash",

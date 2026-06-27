@@ -11,13 +11,13 @@ Real users don't type `{"amount": 50000}`. They send WhatsApp-style messages: sl
 
 ## Executive report (Jun 2026)
 
-**Twelve models** evaluated on **25 extreme Indonesian finance-parse scenarios** (hard-25), merged with **OpenRouter activity CSV** for real cost and throughput (where available). Four supplemental models (Jun 27) use **eval-run costs** from live hard-25 runs.
+**Thirteen models** evaluated on **25 extreme Indonesian finance-parse scenarios** (hard-25), merged with **OpenRouter activity CSV** for real cost and throughput (where available). Supplement models (Jun 27) use **eval-run costs** from live hard-25 runs.
 
 **FX rate used:** 1 USD = **17.905 IDR** (27 Jun 2026, ~12:50 WIB)
 
 ### Visual scorecard
 
-Twelve models · hard-25 eval · charts at full width (not squeezed into one row).
+Thirteen models · hard-25 eval · charts at full width (not squeezed into one row).
 
 #### Strict pass rate
 
@@ -64,11 +64,12 @@ Full tables + notes: **[`docs/REPORT.md`](docs/REPORT.md)**
 | 5 | `xiaomi/mimo-v2.5-pro` | 22/25 | 97 | ~6.0s | $0.0057 | **Rp 101** | Xiaomi OR provider; qty-split weak |
 | 6 | `deepseek/deepseek-v4-pro` | 22/25 | 97 | ~2.4s | $0.0162 | **Rp 291** | Direct API (not OpenRouter) |
 | 7 | `z-ai/glm-4.7` | 22/25 | 97 | ~4.4s | $0.0092 | **Rp 165** | Same failure pattern as 4.5 |
-| 8 | `inclusionai/ling-2.6-1t` | 22/25 | 94 | ~3.2s | $0.0065 | **Rp 116** | Lower composite |
-| 9 | `openai/gpt-oss-120b` | 21/25 | 96 | **~1.3s** | $0.0070 | **Rp 126** | Fastest; 21/25 strict |
-| 10 | `deepseek/deepseek-v4-flash` | 21/25 | 97 | ~2.4s | **$0.0028** | **Rp 50** | Cheapest useful model |
-| 11 | `deepseek/deepseek-v4-pro@openrouter` | 19/25 | 94 | ~2.8s | $0.0217 | **Rp 388** | OR → Baidu; worse than direct |
-| 12 | `nvidia/nemotron-3-nano-30b-a3b` | 15/25 | 90 | ~2.8s | $0.0026 | **Rp 46** | Cheap probe only |
+| 8 | `z-ai/glm-4.7-flash` | **17/25** | 92 | ~2.7s | $0.0022 | **Rp 39** | Fast + cheap but weaker than glm-4.7 |
+| 9 | `inclusionai/ling-2.6-1t` | 22/25 | 94 | ~3.2s | $0.0065 | **Rp 116** | Lower composite |
+| 10 | `openai/gpt-oss-120b` | 21/25 | 96 | **~1.3s** | $0.0070 | **Rp 126** | Fastest; 21/25 strict |
+| 11 | `deepseek/deepseek-v4-flash` | 21/25 | 97 | ~2.4s | **$0.0028** | **Rp 50** | Cheapest useful model |
+| 12 | `deepseek/deepseek-v4-pro@openrouter` | 19/25 | 94 | ~2.8s | $0.0217 | **Rp 388** | OR → Baidu; worse than direct |
+| 13 | `nvidia/nemotron-3-nano-30b-a3b` | 15/25 | 90 | ~2.8s | $0.0026 | **Rp 46** | Cheap probe only |
 
 ### Cost at production scale (IDR)
 
@@ -81,6 +82,7 @@ Per **single parse request** (OpenRouter CSV where available; Jun 27 models from
 | `gemma-4-31b-it` | $0.00025 | **Rp 5** | Rp 5rb | Rp 114rb |
 | `glm-4.5` | $0.00042 | **Rp 7** | Rp 7rb | Rp 224rb |
 | `glm-4.7` | $0.00037 | **Rp 7** | Rp 7rb | Rp 198rb |
+| `glm-4.7-flash` | $0.00009 | **Rp 2** | Rp 2rb | Rp 51rb |
 | `ling-2.6-1t` | $0.00026 | **Rp 5** | Rp 5rb | Rp 139rb |
 | `mimo-v2.5-pro` | $0.00023 | **Rp 4** | Rp 4rb | Rp 121rb |
 | `deepseek-v4-pro` (direct) | $0.00065 | **Rp 12** | Rp 12rb | Rp 349rb |
@@ -94,12 +96,12 @@ Per **single parse request** (OpenRouter CSV where available; Jun 27 models from
 ### Key findings
 
 1. **Three models tie at 24/25** — **`gemma-4-31b-it`** wins on **value + multimodal**; `gemini-3.1-flash-lite` wins on **latency** among the top tier.
-2. **Jun 27 supplements:** MiMo v2.5 Pro (22/25, Rp 101/25-run), DeepSeek v4 Pro direct (22/25), Nemotron Nano (15/25 — not production-ready).
+2. **Jun 27 supplements:** MiMo v2.5 Pro (22/25), DeepSeek v4 Pro direct (22/25), **glm-4.7-flash (17/25 — not a glm-4.7 replacement)**, Nemotron Nano (15/25).
 3. **DeepSeek v4 Pro:** direct `api.deepseek.com` beats OpenRouter default routing (Baidu host, 19/25). Official OR `deepseek` provider blocked on our account privacy policy.
 4. **Shared failure mode at 22/25:** qty×unit line-split (`cilok`, `SPP 3 anak`, `daging 2kg`) — models collapse multiple units into one entry.
 5. **Don't chase 25/25 via prompt A/B** — confirm UI beats benchmark hacking.
 
-Details: [`docs/FINDINGS.md`](docs/FINDINGS.md) · [`docs/results/hard-25-analysis-12models.md`](docs/results/hard-25-analysis-12models.md) · [`docs/results/hard-25-supplement-jun27.md`](docs/results/hard-25-supplement-jun27.md) · [legacy 8-model analysis](docs/results/hard-25-analysis-8models.md)
+Details: [`docs/FINDINGS.md`](docs/FINDINGS.md) · [`docs/results/hard-25-analysis.md`](docs/results/hard-25-analysis.md) · [`docs/results/hard-25-supplement-jun27.md`](docs/results/hard-25-supplement-jun27.md) · [legacy 8-model analysis](docs/results/hard-25-analysis-8models.md)
 
 ### SaaS pricing hint
 
@@ -185,7 +187,7 @@ bun install
 # Full base suite (default: gemma-4-31b-it)
 bun run eval
 
-# Hard-25 — all 12 models (expensive)
+# Hard-25 — all 13 models (expensive)
 bun run eval:hard-25
 
 # Hard-25 — single model / provider
@@ -206,6 +208,7 @@ Requires [Bun](https://bun.sh), [OpenRouter](https://openrouter.ai) API key, and
 | `google/gemini-3.1-flash-lite` | OpenRouter | 24/25, fastest top tier |
 | `google/gemini-3-flash-preview` | OpenRouter | 24/25, pricier |
 | `z-ai/glm-4.5` / `4.7` | OpenRouter | 22/25 |
+| `z-ai/glm-4.7-flash` | OpenRouter | **17/25** — faster/cheaper but weaker than 4.7 |
 | `inclusionai/ling-2.6-1t` | OpenRouter | 22/25 |
 | `openai/gpt-oss-120b` | OpenRouter → Groq | 21/25, fastest |
 | `deepseek/deepseek-v4-flash` | OpenRouter | 21/25, cheapest useful |
@@ -223,19 +226,19 @@ Canonical list: `src/core/model-roster.ts`
 ```
 src/core/
   eval-core.ts                 # Schema, prompt, parser, scoring, base+stress scenarios
-  model-roster.ts              # Canonical 12-model list + USD_TO_IDR
+  model-roster.ts              # Canonical 13-model list + USD_TO_IDR
 scripts/
   eval-hard-*.ts               # Hard suite runners
   eval-hard-25-single.ts       # Single-model hard-25 (OR provider / DeepSeek direct)
   build-finance-model-scorecard.ts
   generate-report-assets.ts    # SVG charts + docs/REPORT.md
-  generate-hard-25-analysis.ts # docs/results/hard-25-analysis-12models.md
+  generate-hard-25-analysis.ts # docs/results/hard-25-analysis.md
 docs/
   charts/                      # Generated visualizations
   results/
-    scorecard.json             # Merged 12-model scorecard
+    scorecard.json             # Merged 13-model scorecard
     runs/                      # Per-model eval JSON (Jun 27 supplement)
-    hard-25-analysis-12models.md
+    hard-25-analysis.md
 ```
 
 ### Output schema
