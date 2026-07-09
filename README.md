@@ -48,7 +48,7 @@ Multi-turn **pencatatan keuangan**: personal + yayasan/sekolah, slang correction
   <img src="./docs/charts/rupiah-pro/quality-vs-price.svg" alt="Rupiah-Pro quality vs suite cost" width="720" />
 </p>
 
-Ideal quadrant: **top-left** (high score, cheaper left). Cost = wall-share of measured OpenRouter batch spend (2 models estimated). Charts: [`docs/charts/rupiah-pro/`](docs/charts/rupiah-pro/)
+Ideal quadrant: **top-left** (high score, cheaper left). Cost = measured OpenRouter **IDR/request** (same Parse-25 scorecard prices — not parallel suite wall-share). Charts: [`docs/charts/rupiah-pro/`](docs/charts/rupiah-pro/)
 
 ### Scoring (public v1)
 

@@ -1,98 +1,117 @@
 {
-  "generatedAt": "2026-07-09T23:33:25.659Z",
+  "generatedAt": "2026-07-09T23:44:25.045Z",
   "fxUsdToIdr": 17905,
-  "method": "overall.spentUsd from budget-track batches, attributed by wallMs share among successful models in that batch. Models without a budget track (gemma-4-31b-it, deepseek-v4-flash) use median attributed-USD/total-scenario-ms × their totalMs.",
-  "caveat": "Parallel runs share one OpenRouter key; wall-share is the best offline attribution until serial re-runs with per-model key snapshots.",
+  "publicCostAxis": {
+    "metric": "csvCostPerReqUsd from docs/results/scorecard.json (Parse-25 OpenRouter activity)",
+    "unit": "IDR per request",
+    "rationale": "Unit prices are measured and comparable. Parallel agentic batch wall-share made Gemma look more expensive than Gemini because Gemma is slower (more wall ms) while actually cheaper per token — that ranking was wrong."
+  },
+  "suiteBurnAuditOnly": {
+    "note": "Wall-share of budget-track overall.spentUsd — do NOT use for public ranking until serial re-runs.",
+    "tracks": [
+      "docs/results/agentic/budget-track-2026-07-09T13-47-17.json",
+      "docs/results/agentic/budget-track-2026-07-09T22-30-02.json"
+    ]
+  },
   "models": [
     {
       "modelId": "google/gemini-3-flash-preview",
       "score": 89,
       "meanMs": 57138,
-      "suiteCostUsd": 0.199672,
-      "suiteCostIdr": 3575,
-      "costMethod": "wall_share_of_batch",
-      "batchId": "2026-07-09T13-47-17"
+      "unitCostUsd": 0.0012702448979591838,
+      "unitCostIdr": 23,
+      "estCost25Usd": 0.031756122448979594,
+      "costMethod": "scorecard_csv_unit_price",
+      "suiteBurnUsdAudit": 0.19967209716767026,
+      "suiteBurnMethod": "wall_share_of_batch:2026-07-09T13-47-17"
     },
     {
       "modelId": "google/gemini-3.1-flash-lite",
       "score": 88.1,
       "meanMs": 42970,
-      "suiteCostUsd": 0.161157,
-      "suiteCostIdr": 2886,
-      "costMethod": "wall_share_of_batch",
-      "batchId": "2026-07-09T22-30-02"
+      "unitCostUsd": 0.0007251224489795921,
+      "unitCostIdr": 13,
+      "estCost25Usd": 0.018128061224489803,
+      "costMethod": "scorecard_csv_unit_price",
+      "suiteBurnUsdAudit": 0.1611569345763693,
+      "suiteBurnMethod": "wall_share_of_batch:2026-07-09T22-30-02"
     },
     {
       "modelId": "xiaomi/mimo-v2.5-pro",
       "score": 87.9,
       "meanMs": 95696,
-      "suiteCostUsd": 0.32834,
-      "suiteCostIdr": 5879,
-      "costMethod": "wall_share_of_batch",
-      "batchId": "2026-07-09T13-47-17"
+      "unitCostUsd": 0.00022609732799999994,
+      "unitCostIdr": 4,
+      "estCost25Usd": 0.0056524331999999984,
+      "costMethod": "scorecard_csv_unit_price",
+      "suiteBurnUsdAudit": 0.3283402121257796,
+      "suiteBurnMethod": "wall_share_of_batch:2026-07-09T13-47-17"
     },
     {
       "modelId": "z-ai/glm-4.5",
       "score": 86.1,
       "meanMs": 54098,
-      "suiteCostUsd": 0.202473,
-      "suiteCostIdr": 3625,
-      "costMethod": "wall_share_of_batch",
-      "batchId": "2026-07-09T22-30-02"
+      "unitCostUsd": 0.00041827906976744207,
+      "unitCostIdr": 7,
+      "estCost25Usd": 0.010456976744186051,
+      "costMethod": "scorecard_csv_unit_price",
+      "suiteBurnUsdAudit": 0.2024733427854013,
+      "suiteBurnMethod": "wall_share_of_batch:2026-07-09T22-30-02"
     },
     {
       "modelId": "google/gemma-4-31b-it",
       "score": 84.9,
       "meanMs": 79175,
-      "suiteCostUsd": 0.284332,
-      "suiteCostIdr": 5091,
-      "costMethod": "estimated_from_median_usd_per_ms",
-      "batchId": null
+      "unitCostUsd": 0.0002541022727272728,
+      "unitCostIdr": 5,
+      "estCost25Usd": 0.0063525568181818206,
+      "costMethod": "scorecard_csv_unit_price",
+      "suiteBurnUsdAudit": null,
+      "suiteBurnMethod": "no_budget_track"
     },
     {
       "modelId": "z-ai/glm-4.7",
       "score": 84.6,
       "meanMs": 66035,
-      "suiteCostUsd": 0.237144,
-      "suiteCostIdr": 4246,
-      "costMethod": "wall_share_of_batch",
-      "batchId": "2026-07-09T13-47-17"
+      "unitCostUsd": 0.0003691708860759492,
+      "unitCostIdr": 7,
+      "estCost25Usd": 0.00922927215189873,
+      "costMethod": "scorecard_csv_unit_price",
+      "suiteBurnUsdAudit": 0.23714350002020065,
+      "suiteBurnMethod": "wall_share_of_batch:2026-07-09T13-47-17"
     },
     {
       "modelId": "inclusionai/ling-2.6-1t",
       "score": 82.3,
       "meanMs": 50630,
-      "suiteCostUsd": 0.196917,
-      "suiteCostIdr": 3526,
-      "costMethod": "wall_share_of_batch",
-      "batchId": "2026-07-09T22-30-02"
+      "unitCostUsd": 0.00025811538461538463,
+      "unitCostIdr": 5,
+      "estCost25Usd": 0.0064528846153846155,
+      "costMethod": "scorecard_csv_unit_price",
+      "suiteBurnUsdAudit": 0.19691743863822928,
+      "suiteBurnMethod": "wall_share_of_batch:2026-07-09T22-30-02"
     },
     {
       "modelId": "deepseek/deepseek-v4-flash",
       "score": 76,
       "meanMs": 57751,
-      "suiteCostUsd": 0.207395,
-      "suiteCostIdr": 3713,
-      "costMethod": "estimated_from_median_usd_per_ms",
-      "batchId": null
+      "unitCostUsd": 0.00011120547945205482,
+      "unitCostIdr": 2,
+      "estCost25Usd": 0.0027801369863013703,
+      "costMethod": "scorecard_csv_unit_price",
+      "suiteBurnUsdAudit": null,
+      "suiteBurnMethod": "no_budget_track"
     },
     {
       "modelId": "deepseek/deepseek-v4-pro",
       "score": 75,
       "meanMs": 61907,
-      "suiteCostUsd": 0.216464,
-      "suiteCostIdr": 3876,
-      "costMethod": "wall_share_of_batch",
-      "batchId": "2026-07-09T13-47-17"
-    },
-    {
-      "modelId": "qwen/qwen3.6-35b-a3b",
-      "score": 62.2,
-      "meanMs": 59942,
-      "suiteCostUsd": 0.210317,
-      "suiteCostIdr": 3766,
-      "costMethod": "wall_share_of_batch",
-      "batchId": "2026-07-09T13-47-17"
+      "unitCostUsd": 0.0006496115999999999,
+      "unitCostIdr": 12,
+      "estCost25Usd": 0.016240289999999998,
+      "costMethod": "scorecard_csv_unit_price",
+      "suiteBurnUsdAudit": 0.21646396129950263,
+      "suiteBurnMethod": "wall_share_of_batch:2026-07-09T13-47-17"
     }
   ]
 }

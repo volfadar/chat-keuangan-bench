@@ -9,7 +9,7 @@
     .quad-label { font: 600 11px system-ui, sans-serif; fill: #64748b; }
   </style>
   <rect width="100%" height="100%" fill="#fafafa"/>
-  <text x="12" y="22" class="title">Rupiah-Pro: quality vs suite cost</text>
+  <text x="12" y="22" class="title">Rupiah-Pro: quality vs unit price</text>
   
   <rect x="72" y="48" width="408" height="212" fill="#bbf7d0" opacity="0.55" rx="2"/>
   <rect x="480" y="48" width="408" height="212" fill="#fef3c7" opacity="0.35" rx="2"/>
@@ -29,35 +29,33 @@
     <line x1="72" y1="48" x2="888" y2="48" stroke="#cbd5e1" stroke-dasharray="3 3" opacity="0.6"/>
     <text x="64" y="52" text-anchor="end" class="tick">100</text>
   
-    <line x1="176.03267840013794" y1="48" x2="176.03267840013794" y2="472" stroke="#e2e8f0" stroke-dasharray="4 4"/>
-    <text x="176.03267840013794" y="492" text-anchor="middle" class="tick">Rp 3rb</text>
-    <line x1="395.9005421251738" y1="48" x2="395.9005421251738" y2="472" stroke="#e2e8f0" stroke-dasharray="4 4"/>
-    <text x="395.9005421251738" y="492" text-anchor="middle" class="tick">Rp 4rb</text>
-    <line x1="615.7684058502097" y1="48" x2="615.7684058502097" y2="472" stroke="#e2e8f0" stroke-dasharray="4 4"/>
-    <text x="615.7684058502097" y="492" text-anchor="middle" class="tick">Rp 5rb</text>
+    <line x1="135.9498432601881" y1="48" x2="135.9498432601881" y2="472" stroke="#e2e8f0" stroke-dasharray="4 4"/>
+    <text x="135.9498432601881" y="492" text-anchor="middle" class="tick">Rp 2</text>
+    <line x1="487.6739811912226" y1="48" x2="487.6739811912226" y2="472" stroke="#e2e8f0" stroke-dasharray="4 4"/>
+    <text x="487.6739811912226" y="492" text-anchor="middle" class="tick">Rp 13</text>
+    <line x1="807.423197492163" y1="48" x2="807.423197492163" y2="472" stroke="#e2e8f0" stroke-dasharray="4 4"/>
+    <text x="807.423197492163" y="492" text-anchor="middle" class="tick">Rp 23</text>
   <line x1="72" y1="472" x2="888" y2="472" stroke="#cbd5e1"/>
   <line x1="72" y1="48" x2="72" y2="472" stroke="#cbd5e1"/>
-  <text x="480" y="550" text-anchor="middle" class="axis">IDR / 28-scenario suite → (cheaper left · more expensive right)</text>
+  <text x="480" y="550" text-anchor="middle" class="axis">IDR / request → (cheaper left · more expensive right)</text>
   <text x="18" y="260" transform="rotate(-90 18 260)" text-anchor="middle" class="axis">Rupiah-Pro score (55–100)</text>
   
-    <circle cx="302.4567000420335" cy="151.64444444444445" r="9" fill="#2563eb" opacity="0.85"/>
-    <text x="302.4567000420335" y="173.64444444444445" text-anchor="middle" class="dot-label">gemini-3-flash-preview</text>
-    <circle cx="150.96774193548384" cy="160.12444444444452" r="9" fill="#16a34a" opacity="0.85"/>
-    <text x="150.96774193548384" y="182.12444444444452" text-anchor="middle" class="dot-label">gemini-3.1-flash-lite</text>
-    <circle cx="809.0322580645162" cy="162.0088888888888" r="9" fill="#dc2626" opacity="0.85"/>
-    <text x="809.0322580645162" y="184.0088888888888" text-anchor="middle" class="dot-label">mimo-v2.5-pro</text>
-    <circle cx="313.45009322828537" cy="178.96888888888896" r="9" fill="#9333ea" opacity="0.85"/>
-    <text x="313.45009322828537" y="200.96888888888896" text-anchor="middle" class="dot-label">glm-4.5</text>
-    <circle cx="635.7763814491879" cy="190.27555555555546" r="9" fill="#ea580c" opacity="0.85"/>
-    <text x="635.7763814491879" y="212.27555555555546" text-anchor="middle" class="dot-label">gemma-4-31b-it</text>
-    <circle cx="449.9880366015326" cy="193.10222222222228" r="9" fill="#0891b2" opacity="0.85"/>
-    <text x="449.9880366015326" y="215.10222222222228" text-anchor="middle" class="dot-label">glm-4.7</text>
-    <circle cx="291.6831747195068" cy="214.77333333333337" r="9" fill="#ca8a04" opacity="0.85"/>
-    <text x="291.6831747195068" y="236.77333333333337" text-anchor="middle" class="dot-label">ling-2.6-1t</text>
-    <circle cx="332.79846523608853" cy="274.1333333333333" r="9" fill="#4f46e5" opacity="0.85"/>
-    <text x="332.79846523608853" y="296.1333333333333" text-anchor="middle" class="dot-label">deepseek-v4-flash</text>
-    <circle cx="368.6369270232693" cy="283.55555555555554" r="9" fill="#0d9488" opacity="0.85"/>
-    <text x="368.6369270232693" y="305.55555555555554" text-anchor="middle" class="dot-label">deepseek-v4-pro</text>
-    <circle cx="344.45146201351537" cy="404.15999999999997" r="9" fill="#be185d" opacity="0.85"/>
-    <text x="344.45146201351537" y="426.15999999999997" text-anchor="middle" class="dot-label">qwen3.6-35b-a3b</text>
+    <circle cx="807.423197492163" cy="151.64444444444445" r="9" fill="#2563eb" opacity="0.85"/>
+    <text x="807.423197492163" y="173.64444444444445" text-anchor="middle" class="dot-label">gemini-3-flash-preview</text>
+    <circle cx="487.6739811912226" cy="160.12444444444452" r="9" fill="#16a34a" opacity="0.85"/>
+    <text x="487.6739811912226" y="182.12444444444452" text-anchor="middle" class="dot-label">gemini-3.1-flash-lite</text>
+    <circle cx="199.89968652037618" cy="162.0088888888888" r="9" fill="#dc2626" opacity="0.85"/>
+    <text x="199.89968652037618" y="184.0088888888888" text-anchor="middle" class="dot-label">mimo-v2.5-pro</text>
+    <circle cx="295.8244514106583" cy="178.96888888888896" r="9" fill="#9333ea" opacity="0.85"/>
+    <text x="295.8244514106583" y="200.96888888888896" text-anchor="middle" class="dot-label">glm-4.5</text>
+    <circle cx="231.8746081504702" cy="190.27555555555546" r="9" fill="#ea580c" opacity="0.85"/>
+    <text x="231.8746081504702" y="212.27555555555546" text-anchor="middle" class="dot-label">gemma-4-31b-it</text>
+    <circle cx="295.8244514106583" cy="193.10222222222228" r="9" fill="#0891b2" opacity="0.85"/>
+    <text x="295.8244514106583" y="215.10222222222228" text-anchor="middle" class="dot-label">glm-4.7</text>
+    <circle cx="231.8746081504702" cy="214.77333333333337" r="9" fill="#ca8a04" opacity="0.85"/>
+    <text x="231.8746081504702" y="236.77333333333337" text-anchor="middle" class="dot-label">ling-2.6-1t</text>
+    <circle cx="135.9498432601881" cy="274.1333333333333" r="9" fill="#4f46e5" opacity="0.85"/>
+    <text x="135.9498432601881" y="296.1333333333333" text-anchor="middle" class="dot-label">deepseek-v4-flash</text>
+    <circle cx="455.69905956112854" cy="283.55555555555554" r="9" fill="#0d9488" opacity="0.85"/>
+    <text x="455.69905956112854" y="305.55555555555554" text-anchor="middle" class="dot-label">deepseek-v4-pro</text>
 </svg>

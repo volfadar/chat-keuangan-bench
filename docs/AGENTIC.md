@@ -35,7 +35,7 @@ bun run score:rupiah-pro
 # → docs/charts/rupiah-pro/* (score / cost / latency / quality-vs-price)
 ```
 
-Charts use the same axis convention as Parse-25: **cheap left → expensive right**, ideal = **top-left**. Suite cost is wall-share of measured OpenRouter batch spend (see `docs/charts/rupiah-pro/cost-attribution.json`).
+Charts use the same axis convention as Parse-25: **cheap left → expensive right**, ideal = **top-left**. Public cost axis = measured OpenRouter **IDR/request** from the Parse-25 scorecard (not parallel-batch wall-share — that wrongly made Gemma look pricier than Gemini).
 
 ### Why not “legacy raw” (det40+rub25+step25+if10)?
 

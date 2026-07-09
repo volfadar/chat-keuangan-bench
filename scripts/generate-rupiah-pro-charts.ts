@@ -1,11 +1,16 @@
 /**
  * generate-rupiah-pro-charts.ts — Parse-25-style SVG charts for Rupiah-Pro.
  *
- * Cost metric (best available until serial re-runs):
- *   - Measured OpenRouter batch spend (`overall.spentUsd` from budget-track-*.json)
- *   - Attributed to each model by wall-time share within that batch
- *   - Pre-tracker models (gemma, deepseek-v4-flash): estimated via median
- *     attributed-USD / total-scenario-ms from tracked models
+ * Cost axis (public / reliable):
+ *   OpenRouter **unit price** from Parse-25 scorecard (`csvCostPerReqUsd` → IDR/request).
+ *   Same measured prices as the Parse-25 quality-vs-price chart — NOT wall-time
+ *   attribution of parallel agentic batches (those over-attribute slow/cheap models
+ *   like Gemma and are not comparable across batches).
+ *
+ * Latency axis: mean scenario ms from agentic suite traces (agent + judge).
+ *
+ * Suite $ burn: kept in cost-attribution.json as audit-only (unreliable until
+ * serial re-runs with per-model key snapshots).
  *
  * Scatter: cheap left → expensive right; ideal = top-left.
  *
@@ -54,15 +59,27 @@ type SuiteResult = {
   results: Array<{ ms?: number; error?: string | null }>;
 };
 
+type ScorecardPayload = {
+  scorecard: Array<{
+    modelId: string;
+    csvCostPerReqUsd: number | null;
+    estCost25Usd: number | null;
+  }>;
+};
+
 type CostRow = {
   modelId: string;
   score: number;
   meanMs: number;
   totalMs: number;
-  suiteCostUsd: number;
-  suiteCostIdr: number;
-  costMethod: "wall_share_of_batch" | "estimated_from_median_usd_per_ms";
-  batchId?: string;
+  /** Measured OpenRouter IDR per request (Parse-25 scorecard) — public X axis */
+  unitCostIdr: number;
+  unitCostUsd: number;
+  estCost25Usd: number;
+  costMethod: "scorecard_csv_unit_price";
+  /** Audit-only parallel-batch wall share — NOT for ranking */
+  suiteBurnUsdAudit: number | null;
+  suiteBurnMethod: string | null;
 };
 
 const BUDGET_TRACKS = [
@@ -88,9 +105,8 @@ function loadJson<T>(path: string): T {
   return JSON.parse(readFileSync(resolve(path), "utf8")) as T;
 }
 
-/** Wall-share attribution of measured batch spend → per-model suite USD. */
-function wallShareCosts(): Map<string, { usd: number; batchId: string; wallMs: number }> {
-  const out = new Map<string, { usd: number; batchId: string; wallMs: number }>();
+function wallShareCosts(): Map<string, { usd: number; batchId: string }> {
+  const out = new Map<string, { usd: number; batchId: string }>();
   for (const rel of BUDGET_TRACKS) {
     const path = resolve(rel);
     if (!existsSync(path)) continue;
@@ -102,7 +118,6 @@ function wallShareCosts(): Map<string, { usd: number; batchId: string; wallMs: n
       out.set(s.modelId, {
         usd: track.overall.spentUsd * (s.wallMs / sumWall),
         batchId: track.runId,
-        wallMs: s.wallMs,
       });
     }
   }
@@ -119,36 +134,75 @@ function suiteTiming(sourcePath: string): { meanMs: number; totalMs: number } {
   };
 }
 
-function buildCostRows(lb: LeaderboardPayload): CostRow[] {
-  const attributed = wallShareCosts();
-  const rates: number[] = [];
-  const timings = new Map<string, { meanMs: number; totalMs: number }>();
-
-  for (const row of lb.leaderboard) {
-    const t = suiteTiming(row.sourcePath);
-    timings.set(row.modelId, t);
-    const a = attributed.get(row.modelId);
-    if (a && t.totalMs > 0) rates.push(a.usd / t.totalMs);
+function loadUnitPrices(): Map<string, { usdPerReq: number; estCost25Usd: number }> {
+  const path = resolve("docs/results/scorecard.json");
+  const sc = loadJson<ScorecardPayload>(path);
+  const out = new Map<string, { usdPerReq: number; estCost25Usd: number }>();
+  for (const r of sc.scorecard) {
+    if (r.csvCostPerReqUsd == null) continue;
+    out.set(r.modelId, {
+      usdPerReq: r.csvCostPerReqUsd,
+      estCost25Usd: r.estCost25Usd ?? r.csvCostPerReqUsd * 25,
+    });
   }
+  return out;
+}
 
-  rates.sort((a, b) => a - b);
-  const medianRate = rates[Math.floor(rates.length / 2)] ?? 1.25e-7;
+type TimingRow = {
+  modelId: string;
+  score: number;
+  meanMs: number;
+  totalMs: number;
+};
 
+function buildTimingRows(lb: LeaderboardPayload): TimingRow[] {
   return lb.leaderboard.map((row) => {
-    const t = timings.get(row.modelId)!;
-    const a = attributed.get(row.modelId);
-    const suiteCostUsd = a ? a.usd : medianRate * t.totalMs;
+    const t = suiteTiming(row.sourcePath);
     return {
       modelId: row.modelId,
       score: row.score,
       meanMs: t.meanMs,
       totalMs: t.totalMs,
-      suiteCostUsd,
-      suiteCostIdr: usdToIdr(suiteCostUsd),
-      costMethod: a ? "wall_share_of_batch" : "estimated_from_median_usd_per_ms",
-      batchId: a?.batchId,
     };
   });
+}
+
+function buildCostRows(lb: LeaderboardPayload): CostRow[] {
+  const unitPrices = loadUnitPrices();
+  const burnAudit = wallShareCosts();
+  const missing: string[] = [];
+
+  const rows: CostRow[] = [];
+  for (const row of lb.leaderboard) {
+    const t = suiteTiming(row.sourcePath);
+    const price = unitPrices.get(row.modelId);
+    if (!price) {
+      missing.push(row.modelId);
+      continue;
+    }
+    const burn = burnAudit.get(row.modelId);
+    rows.push({
+      modelId: row.modelId,
+      score: row.score,
+      meanMs: t.meanMs,
+      totalMs: t.totalMs,
+      unitCostUsd: price.usdPerReq,
+      unitCostIdr: usdToIdr(price.usdPerReq),
+      estCost25Usd: price.estCost25Usd,
+      costMethod: "scorecard_csv_unit_price",
+      suiteBurnUsdAudit: burn?.usd ?? null,
+      suiteBurnMethod: burn
+        ? `wall_share_of_batch:${burn.batchId}`
+        : "no_budget_track",
+    });
+  }
+
+  if (missing.length) {
+    console.warn(
+      `WARN: no Parse-25 unit price for: ${missing.join(", ")} — omitted from cost scatter only`,
+    );
+  }
+  return rows;
 }
 
 function main() {
@@ -158,10 +212,13 @@ function main() {
   mkdirSync(outDir, { recursive: true });
 
   const lb = loadJson<LeaderboardPayload>(lbPath);
+  const timings = buildTimingRows(lb);
   const costs = buildCostRows(lb);
-  const byScore = [...costs].sort((a, b) => b.score - a.score);
-  const byCost = [...costs].sort((a, b) => a.suiteCostUsd - b.suiteCostUsd);
-  const byLatency = [...costs].sort((a, b) => a.meanMs - b.meanMs);
+  if (costs.length === 0) throw new Error("No models with unit prices");
+
+  const byScore = [...timings].sort((a, b) => b.score - a.score);
+  const byCost = [...costs].sort((a, b) => a.unitCostUsd - b.unitCostUsd);
+  const byLatency = [...timings].sort((a, b) => a.meanMs - b.meanMs);
 
   const scoreChart = barChartSvg({
     title: "Rupiah-Pro public score (v1)",
@@ -176,21 +233,19 @@ function main() {
   });
 
   const costChart = barChartSvg({
-    title: "Est. cost per full 28-scenario suite (IDR)",
-    unit: `Wall-share of measured OpenRouter batch spend · FX 1 USD = ${USD_TO_IDR.toLocaleString("id-ID")} IDR · * = estimated`,
+    title: "OpenRouter unit price (IDR / request)",
+    unit: `Same measured prices as Parse-25 scorecard · FX 1 USD = ${USD_TO_IDR.toLocaleString("id-ID")} IDR · NOT agentic suite burn`,
     rows: byCost.map((r, i) => ({
-      label:
-        shortModelName(r.modelId) +
-        (r.costMethod === "estimated_from_median_usd_per_ms" ? " *" : ""),
-      value: r.suiteCostIdr,
-      display: fmtIdrShort(r.suiteCostIdr),
+      label: shortModelName(r.modelId),
+      value: r.unitCostIdr,
+      display: fmtIdr(r.unitCostIdr),
       color: PALETTE[i % PALETTE.length]!,
     })),
   });
 
   const latencyChart = barChartSvg({
     title: "Mean scenario latency (agent + judge)",
-    unit: "Milliseconds — lower is better",
+    unit: "Milliseconds — lower is better · from Rupiah-Pro suite traces",
     rows: byLatency.map((r, i) => ({
       label: shortModelName(r.modelId),
       value: r.meanMs,
@@ -199,29 +254,31 @@ function main() {
     })),
   });
 
-  const minIdr = Math.min(...costs.map((c) => c.suiteCostIdr));
-  const maxIdr = Math.max(...costs.map((c) => c.suiteCostIdr));
-  const yMin = Math.max(0, Math.floor(Math.min(...costs.map((c) => c.score)) / 5) * 5 - 5);
+  const minIdr = Math.min(...costs.map((c) => c.unitCostIdr));
+  const maxIdr = Math.max(...costs.map((c) => c.unitCostIdr));
+  const yMin = Math.max(0, Math.floor(Math.min(...timings.map((c) => c.score)) / 5) * 5 - 5);
   const yMax = 100;
 
   const scatterChart = scatterSvg({
-    title: "Rupiah-Pro: quality vs suite cost",
-    xLabel: "IDR / 28-scenario suite → (cheaper left · more expensive right)",
+    title: "Rupiah-Pro: quality vs unit price",
+    xLabel: "IDR / request → (cheaper left · more expensive right)",
     yLabel: `Rupiah-Pro score (${yMin}–${yMax})`,
     yMin,
     yMax,
     xMetricTicks: idrCostTicks(minIdr, maxIdr),
-    formatXTick: (n) => fmtIdrShort(n),
+    formatXTick: (n) => `Rp\u00a0${Math.round(n)}`,
     shortLabel: shortModelName,
     points: costs.map((r, i) => ({
       label: r.modelId,
-      x: r.suiteCostIdr,
+      x: r.unitCostIdr,
       y: r.score,
       color: PALETTE[i % PALETTE.length]!,
     })),
   });
 
   writeFileSync(resolve(outDir, "score.svg"), scoreChart);
+  writeFileSync(resolve(outDir, "cost-unit-idr.svg"), costChart);
+  // Keep old filename as alias so existing links don't 404
   writeFileSync(resolve(outDir, "cost-suite-idr.svg"), costChart);
   writeFileSync(resolve(outDir, "latency.svg"), latencyChart);
   writeFileSync(resolve(outDir, "quality-vs-price.svg"), scatterChart);
@@ -229,18 +286,26 @@ function main() {
   const costMeta = {
     generatedAt: new Date().toISOString(),
     fxUsdToIdr: USD_TO_IDR,
-    method:
-      "overall.spentUsd from budget-track batches, attributed by wallMs share among successful models in that batch. Models without a budget track (gemma-4-31b-it, deepseek-v4-flash) use median attributed-USD/total-scenario-ms × their totalMs.",
-    caveat:
-      "Parallel runs share one OpenRouter key; wall-share is the best offline attribution until serial re-runs with per-model key snapshots.",
+    publicCostAxis: {
+      metric: "csvCostPerReqUsd from docs/results/scorecard.json (Parse-25 OpenRouter activity)",
+      unit: "IDR per request",
+      rationale:
+        "Unit prices are measured and comparable. Parallel agentic batch wall-share made Gemma look more expensive than Gemini because Gemma is slower (more wall ms) while actually cheaper per token — that ranking was wrong.",
+    },
+    suiteBurnAuditOnly: {
+      note: "Wall-share of budget-track overall.spentUsd — do NOT use for public ranking until serial re-runs.",
+      tracks: BUDGET_TRACKS,
+    },
     models: costs.map((c) => ({
       modelId: c.modelId,
       score: c.score,
       meanMs: Math.round(c.meanMs),
-      suiteCostUsd: Math.round(c.suiteCostUsd * 1e6) / 1e6,
-      suiteCostIdr: c.suiteCostIdr,
+      unitCostUsd: c.unitCostUsd,
+      unitCostIdr: c.unitCostIdr,
+      estCost25Usd: c.estCost25Usd,
       costMethod: c.costMethod,
-      batchId: c.batchId ?? null,
+      suiteBurnUsdAudit: c.suiteBurnUsdAudit,
+      suiteBurnMethod: c.suiteBurnMethod,
     })),
   };
   writeFileSync(resolve(outDir, "cost-attribution.json"), JSON.stringify(costMeta, null, 2));
@@ -252,9 +317,9 @@ function main() {
     ``,
     `Same visual language as Parse-25. Cost X-axis: **cheaper left → expensive right**; ideal quadrant **top-left**.`,
     ``,
-    `**Cost method:** ${costMeta.method}`,
+    `**Public cost metric:** measured OpenRouter **IDR/request** from the Parse-25 scorecard (same source as Parse-25 quality-vs-price).`,
     ``,
-    `> ${costMeta.caveat}`,
+    `> Agentic suite $ burn from parallel batches is **not** used on the public chart — wall-share wrongly ranked slow/cheap models (e.g. Gemma) above Gemini.`,
     ``,
     ...chartEmbedMd(
       "./score.svg",
@@ -262,35 +327,34 @@ function main() {
       "Rupiah-Pro v1 · 14 discriminative scenarios.",
     ),
     ...chartEmbedMd(
-      "./cost-suite-idr.svg",
-      "Suite cost (IDR)",
-      `FX: 1 USD = ${USD_TO_IDR.toLocaleString("id-ID")} IDR. * = estimated (no budget track).`,
+      "./cost-unit-idr.svg",
+      "Unit price (IDR / request)",
+      `FX: 1 USD = ${USD_TO_IDR.toLocaleString("id-ID")} IDR · Parse-25 scorecard.`,
     ),
     ...chartEmbedMd("./latency.svg", "Mean scenario latency"),
     ...chartEmbedMd(
       "./quality-vs-price.svg",
-      "Quality vs suite cost",
+      "Quality vs unit price",
       "Ideal quadrant: **top-left** (high score, cheaper → left).",
     ),
     `## Cost table`,
     ``,
-    `| Model | Score | Mean latency | Suite $ | Suite IDR | Method |`,
-    `|-------|------:|-------------:|--------:|----------:|--------|`,
-    ...byScore.map(
-      (r) =>
-        `| \`${shortModelName(r.modelId)}\` | ${r.score} | ${Math.round(r.meanMs / 1000)}s | $${r.suiteCostUsd.toFixed(3)} | ${fmtIdr(r.suiteCostIdr)} | ${r.costMethod === "wall_share_of_batch" ? "measured†" : "estimated*"} |`,
-    ),
-    ``,
-    `† Wall-share of measured batch \`overall.spentUsd\`. * Median USD/ms × scenario totalMs.`,
+    `| Model | Score | Mean latency | IDR/req | $/25-parse |`,
+    `|-------|------:|-------------:|--------:|-----------:|`,
+    ...byScore.map((r) => {
+      const c = costs.find((x) => x.modelId === r.modelId);
+      return `| \`${shortModelName(r.modelId)}\` | ${r.score} | ${Math.round(r.meanMs / 1000)}s | ${c ? fmtIdr(c.unitCostIdr) : "—"} | ${c ? `$${c.estCost25Usd.toFixed(4)}` : "—"} |`;
+    }),
     ``,
   ];
 
   writeFileSync(resolve(outDir, "README.md"), reportLines.join("\n"));
 
   console.log(`Rupiah-Pro charts → ${outDir}/`);
-  for (const c of byScore) {
+  console.log("Public cost = Parse-25 unit price (IDR/req):");
+  for (const c of byCost) {
     console.log(
-      `  ${c.score.toFixed(1).padStart(5)}  ${fmtIdrShort(c.suiteCostIdr).padStart(8)}  ${shortModelName(c.modelId)}${c.costMethod === "estimated_from_median_usd_per_ms" ? " *" : ""}`,
+      `  ${fmtIdr(c.unitCostIdr).padStart(8)}  score=${c.score.toFixed(1).padStart(5)}  ${shortModelName(c.modelId)}`,
     );
   }
 }
