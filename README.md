@@ -44,6 +44,12 @@ Multi-turn **pencatatan keuangan**: personal + yayasan/sekolah, slang correction
 
 **Spread:** 26.8 points · **n = 14** discriminative scenarios · full table: [`rupiah-pro-leaderboard-latest.md`](docs/results/agentic/rupiah-pro-leaderboard-latest.md)
 
+<p align="center">
+  <img src="./docs/charts/rupiah-pro/quality-vs-price.svg" alt="Rupiah-Pro quality vs suite cost" width="720" />
+</p>
+
+Ideal quadrant: **top-left** (high score, cheaper left). Cost = wall-share of measured OpenRouter batch spend (2 models estimated). Charts: [`docs/charts/rupiah-pro/`](docs/charts/rupiah-pro/)
+
 ### Scoring (public v1)
 
 ```text
@@ -72,7 +78,8 @@ Tools include SQLite ledger, inbox + OCR, CSV/PDF readers, export. Web search is
 
 ```bash
 bun run eval:agentic -- --suite all --model google/gemma-4-31b-it --concurrency 3
-bun run score:rupiah-pro          # rebuild public leaderboard from saved traces
+bun run score:rupiah-pro          # leaderboard + charts from saved traces
+bun run report:rupiah-pro         # charts only
 bun run studio                    # Mastra traces → http://localhost:4111
 ```
 
@@ -99,8 +106,10 @@ Extract structured Rupiah transactions from one messy chat line. Primary model-s
 Charts + cost tables: [`docs/REPORT.md`](docs/REPORT.md) · findings: [`docs/FINDINGS.md`](docs/FINDINGS.md)
 
 <p align="center">
-  <img src="./docs/charts/strict-pass.svg" alt="Hard-25 strict pass rate" width="720" />
+  <img src="./docs/charts/quality-vs-price.svg" alt="Parse-25 quality vs price" width="720" />
 </p>
+
+Ideal quadrant: **top-left** (high composite, cheaper left). Also: [`strict-pass.svg`](docs/charts/strict-pass.svg) · full charts in [`docs/REPORT.md`](docs/REPORT.md)
 
 ### Sample inputs
 

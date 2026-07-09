@@ -32,7 +32,10 @@ Headline board uses **14 discriminative scenarios** (models still separate). Eas
 ```bash
 bun run score:rupiah-pro
 # → docs/results/agentic/rupiah-pro-leaderboard-latest.{md,json}
+# → docs/charts/rupiah-pro/* (score / cost / latency / quality-vs-price)
 ```
+
+Charts use the same axis convention as Parse-25: **cheap left → expensive right**, ideal = **top-left**. Suite cost is wall-share of measured OpenRouter batch spend (see `docs/charts/rupiah-pro/cost-attribution.json`).
 
 ### Why not “legacy raw” (det40+rub25+step25+if10)?
 
@@ -72,6 +75,7 @@ bun run eval:agentic -- --suite hard --dry-run
 bun run eval:agentic -- --suite all --model google/gemma-4-31b-it --concurrency 3
 bun run eval:agentic -- --ids h-slang-gopek-meja-bleed,hp-auditor-pdf-csv-nota
 bun run score:rupiah-pro
+bun run report:rupiah-pro
 bun run studio   # http://localhost:4111
 ```
 

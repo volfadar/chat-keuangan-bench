@@ -1,0 +1,98 @@
+{
+  "generatedAt": "2026-07-09T23:33:25.659Z",
+  "fxUsdToIdr": 17905,
+  "method": "overall.spentUsd from budget-track batches, attributed by wallMs share among successful models in that batch. Models without a budget track (gemma-4-31b-it, deepseek-v4-flash) use median attributed-USD/total-scenario-ms × their totalMs.",
+  "caveat": "Parallel runs share one OpenRouter key; wall-share is the best offline attribution until serial re-runs with per-model key snapshots.",
+  "models": [
+    {
+      "modelId": "google/gemini-3-flash-preview",
+      "score": 89,
+      "meanMs": 57138,
+      "suiteCostUsd": 0.199672,
+      "suiteCostIdr": 3575,
+      "costMethod": "wall_share_of_batch",
+      "batchId": "2026-07-09T13-47-17"
+    },
+    {
+      "modelId": "google/gemini-3.1-flash-lite",
+      "score": 88.1,
+      "meanMs": 42970,
+      "suiteCostUsd": 0.161157,
+      "suiteCostIdr": 2886,
+      "costMethod": "wall_share_of_batch",
+      "batchId": "2026-07-09T22-30-02"
+    },
+    {
+      "modelId": "xiaomi/mimo-v2.5-pro",
+      "score": 87.9,
+      "meanMs": 95696,
+      "suiteCostUsd": 0.32834,
+      "suiteCostIdr": 5879,
+      "costMethod": "wall_share_of_batch",
+      "batchId": "2026-07-09T13-47-17"
+    },
+    {
+      "modelId": "z-ai/glm-4.5",
+      "score": 86.1,
+      "meanMs": 54098,
+      "suiteCostUsd": 0.202473,
+      "suiteCostIdr": 3625,
+      "costMethod": "wall_share_of_batch",
+      "batchId": "2026-07-09T22-30-02"
+    },
+    {
+      "modelId": "google/gemma-4-31b-it",
+      "score": 84.9,
+      "meanMs": 79175,
+      "suiteCostUsd": 0.284332,
+      "suiteCostIdr": 5091,
+      "costMethod": "estimated_from_median_usd_per_ms",
+      "batchId": null
+    },
+    {
+      "modelId": "z-ai/glm-4.7",
+      "score": 84.6,
+      "meanMs": 66035,
+      "suiteCostUsd": 0.237144,
+      "suiteCostIdr": 4246,
+      "costMethod": "wall_share_of_batch",
+      "batchId": "2026-07-09T13-47-17"
+    },
+    {
+      "modelId": "inclusionai/ling-2.6-1t",
+      "score": 82.3,
+      "meanMs": 50630,
+      "suiteCostUsd": 0.196917,
+      "suiteCostIdr": 3526,
+      "costMethod": "wall_share_of_batch",
+      "batchId": "2026-07-09T22-30-02"
+    },
+    {
+      "modelId": "deepseek/deepseek-v4-flash",
+      "score": 76,
+      "meanMs": 57751,
+      "suiteCostUsd": 0.207395,
+      "suiteCostIdr": 3713,
+      "costMethod": "estimated_from_median_usd_per_ms",
+      "batchId": null
+    },
+    {
+      "modelId": "deepseek/deepseek-v4-pro",
+      "score": 75,
+      "meanMs": 61907,
+      "suiteCostUsd": 0.216464,
+      "suiteCostIdr": 3876,
+      "costMethod": "wall_share_of_batch",
+      "batchId": "2026-07-09T13-47-17"
+    },
+    {
+      "modelId": "qwen/qwen3.6-35b-a3b",
+      "score": 62.2,
+      "meanMs": 59942,
+      "suiteCostUsd": 0.210317,
+      "suiteCostIdr": 3766,
+      "costMethod": "wall_share_of_batch",
+      "batchId": "2026-07-09T13-47-17"
+    }
+  ]
+}

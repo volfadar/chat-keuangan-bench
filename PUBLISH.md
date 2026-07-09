@@ -21,6 +21,8 @@ git push origin main
 | `docs/results/scorecard.json` | Parse-25 |
 | `docs/results/hard-25-analysis.md` | Parse-25 |
 | `docs/charts/*.svg` | Parse-25 |
+| `docs/charts/rupiah-pro/*.svg` | Rupiah-Pro |
 | `docs/results/agentic/*-agentic-suite.json` | Rupiah-Pro raw traces |
 | `docs/results/agentic/rupiah-pro-leaderboard-latest.*` | Rupiah-Pro public v1 |
+| `docs/results/agentic/budget-track-*.json` | Measured suite spend (for cost charts) |
 | `src/core/model-roster.ts` | Shared model list |

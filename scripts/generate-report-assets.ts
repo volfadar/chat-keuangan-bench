@@ -1,6 +1,8 @@
 /**
  * generate-report-assets.ts — SVG charts + IDR-enriched report from scorecard JSON.
  *
+ * Scatter: X = cost ascending (cheap left → expensive right), ideal = top-left.
+ *
  * FX rate: 1 USD = 17,905 IDR (27 Jun 2026 ~12:50 WIB)
  *
  * Run:
@@ -11,6 +13,13 @@
 import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { resolve } from "node:path";
 import { ALL_EVAL_MODELS, USD_TO_IDR, shortModelName } from "../src/core/model-roster.ts";
+import {
+  PALETTE,
+  barChartSvg,
+  chartEmbedMd,
+  idrCostTicks,
+  scatterSvg,
+} from "./lib/chart-svg.ts";
 
 export { USD_TO_IDR, shortModelName as shortName } from "../src/core/model-roster.ts";
 
@@ -57,188 +66,12 @@ function parseArgs(argv: string[]) {
   return { scorecardPath, outDir };
 }
 
-/** Native SVG width — renders large when embedded full-width in README */
-const CHART_WIDTH = 960;
-const BAR_HEIGHT = 36;
-const LABEL_W = 220;
-const VALUE_W = 140;
-
-function barChartSvg(opts: {
-  title: string;
-  rows: Array<{ label: string; value: number; display: string; color: string }>;
-  maxValue?: number;
-  width?: number;
-  barHeight?: number;
-  unit?: string;
-}): string {
-  const width = opts.width ?? CHART_WIDTH;
-  const barH = opts.barHeight ?? BAR_HEIGHT;
-  const gap = 12;
-  const labelW = LABEL_W;
-  const valueW = VALUE_W;
-  const chartW = width - labelW - valueW - 48;
-  const max = opts.maxValue ?? Math.max(...opts.rows.map((r) => r.value), 1);
-  const height = 56 + opts.rows.length * (barH + gap) + 28;
-
-  const bars = opts.rows
-    .map((r, i) => {
-      const y = 52 + i * (barH + gap);
-      const w = Math.max(4, (r.value / max) * chartW);
-      return `
-    <text x="8" y="${y + barH * 0.72}" class="label">${escapeXml(r.label)}</text>
-    <rect x="${labelW}" y="${y}" width="${w}" height="${barH}" rx="4" fill="${r.color}"/>
-    <text x="${labelW + chartW + 8}" y="${y + barH * 0.72}" class="value">${escapeXml(r.display)}</text>`;
-    })
-    .join("");
-
-  return `<?xml version="1.0" encoding="UTF-8"?>
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${width} ${height}" width="${width}" height="${height}">
-  <style>
-    .title { font: 600 18px system-ui, sans-serif; fill: #0f172a; }
-    .label { font: 14px system-ui, sans-serif; fill: #334155; }
-    .value { font: 14px system-ui, sans-serif; fill: #475569; }
-    .sub { font: 12px system-ui, sans-serif; fill: #64748b; }
-  </style>
-  <rect width="100%" height="100%" fill="#fafafa"/>
-  <text x="16" y="28" class="title">${escapeXml(opts.title)}</text>
-  ${opts.unit ? `<text x="16" y="46" class="sub">${escapeXml(opts.unit)}</text>` : ""}
-  ${bars}
-</svg>`;
-}
-
-function scatterSvg(opts: {
-  title: string;
-  points: Array<{ label: string; x: number; y: number; color: string }>;
-  xLabel: string;
-  yLabel: string;
-  yMin?: number;
-  yMax?: number;
-  /** IDR/parse tick values shown along the X axis (left = mahal, right = murah) */
-  xMetricTicks?: number[];
-  priceMin?: number;
-  priceMax?: number;
-  xPadRight?: number;
-  xPadLeft?: number;
-  width?: number;
-  height?: number;
-}): string {
-  const W = opts.width ?? CHART_WIDTH;
-  const H = opts.height ?? 560;
-  const pad = { l: 72, r: 72, t: 48, b: 88 };
-  const plotW = W - pad.l - pad.r;
-  const plotH = H - pad.t - pad.b;
-  const dataMinX = Math.min(...opts.points.map((p) => p.x));
-  const dataMaxX = Math.max(...opts.points.map((p) => p.x));
-  const dataSpan = dataMaxX - dataMinX || 1;
-  const xPadLeft = opts.xPadLeft ?? 0.06;
-  const xPadRight = opts.xPadRight ?? 0.2;
-  const displayMinX = dataMinX - dataSpan * xPadLeft;
-  const displayMaxX = dataMaxX + dataSpan * xPadRight;
-  const displaySpan = displayMaxX - displayMinX || 1;
-  const minY = opts.yMin ?? 0;
-  const maxY = opts.yMax ?? 100;
-  const ySpan = maxY - minY || 1;
-
-  const plotX = (invertedX: number) => pad.l + ((invertedX - displayMinX) / displaySpan) * plotW;
-  const plotY = (value: number) => {
-    const yClamped = Math.min(maxY, Math.max(minY, value));
-    return pad.t + plotH - ((yClamped - minY) / ySpan) * plotH;
-  };
-
-  // Top-right = high quality + cheap (subtle highlight, not high contrast)
-  const idealQuad = `
-  <rect x="${pad.l + plotW / 2}" y="${pad.t}" width="${plotW / 2}" height="${plotH / 2}" fill="#22c55e" opacity="0.07" rx="4"/>`;
-
-  const yTicks = [minY, minY + ySpan * 0.5, maxY];
-  const yGrid = yTicks
-    .map((tick) => {
-      const cy = pad.t + plotH - ((tick - minY) / ySpan) * plotH;
-      return `
-    <line x1="${pad.l}" y1="${cy}" x2="${pad.l + plotW}" y2="${cy}" stroke="#e2e8f0" stroke-dasharray="4 4"/>
-    <text x="${pad.l - 8}" y="${cy + 4}" text-anchor="end" class="tick">${tick.toFixed(0)}</text>`;
-    })
-    .join("");
-
-  const priceMin = opts.priceMin ?? 0;
-  const priceMax = opts.priceMax ?? 1;
-  const xTicks = opts.xMetricTicks ?? [];
-  const xGrid = xTicks
-    .map((priceIdr) => {
-      const invertedX = priceMax - priceIdr + priceMin;
-      const cx = plotX(invertedX);
-      return `
-    <line x1="${cx}" y1="${pad.t}" x2="${cx}" y2="${pad.t + plotH}" stroke="#e2e8f0" stroke-dasharray="4 4"/>
-    <text x="${cx}" y="${pad.t + plotH + 20}" text-anchor="middle" class="tick">Rp\u00a0${priceIdr}</text>`;
-    })
-    .join("");
-
-  const dots = opts.points
-    .map((p) => {
-      const cx = plotX(p.x);
-      const cy = plotY(p.y);
-      return `
-    <circle cx="${cx}" cy="${cy}" r="9" fill="${p.color}" opacity="0.85"/>
-    <text x="${cx}" y="${cy + 22}" text-anchor="middle" class="dot-label">${escapeXml(shortName(p.label))}</text>`;
-    })
-    .join("");
-
-  return `<?xml version="1.0" encoding="UTF-8"?>
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${W} ${H}" width="${W}" height="${H}">
-  <style>
-    .title { font: 600 18px system-ui, sans-serif; fill: #0f172a; }
-    .axis { font: 13px system-ui, sans-serif; fill: #64748b; }
-    .tick { font: 11px system-ui, sans-serif; fill: #94a3b8; }
-    .dot-label { font: 12px system-ui, sans-serif; fill: #334155; }
-  </style>
-  <rect width="100%" height="100%" fill="#fafafa"/>
-  <text x="12" y="22" class="title">${escapeXml(opts.title)}</text>
-  ${idealQuad}
-  ${yGrid}
-  ${xGrid}
-  <line x1="${pad.l}" y1="${pad.t + plotH}" x2="${pad.l + plotW}" y2="${pad.t + plotH}" stroke="#cbd5e1"/>
-  <line x1="${pad.l}" y1="${pad.t}" x2="${pad.l}" y2="${pad.t + plotH}" stroke="#cbd5e1"/>
-  <text x="${pad.l + plotW / 2}" y="${H - 10}" text-anchor="middle" class="axis">${escapeXml(opts.xLabel)}</text>
-  <text x="18" y="${pad.t + plotH / 2}" transform="rotate(-90 18 ${pad.t + plotH / 2})" text-anchor="middle" class="axis">${escapeXml(opts.yLabel)}</text>
-  ${dots}
-</svg>`;
-}
-
-/** Round IDR/parse axis ticks between min and max (left mahal → right murah). */
-function idrPriceTicks(minIdr: number, maxIdr: number): number[] {
-  const candidates = [2, 3, 5, 7, 10, 13, 15, 20, 23, 25, 30];
-  const inRange = candidates.filter((n) => n >= minIdr - 1 && n <= maxIdr + 1);
-  if (inRange.length >= 3) return inRange;
-  return [minIdr, Math.round((minIdr + maxIdr) / 2), maxIdr];
-}
-
-function escapeXml(s: string): string {
-  return s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
-}
-
-/** Full-width chart block for GitHub README / REPORT (HTML img renders larger than table cells). */
-function chartEmbedMd(relPath: string, title: string, caption?: string): string[] {
-  const lines = [
-    `#### ${title}`,
-    ``,
-    `<p align="center">`,
-    `  <img src="${relPath}" alt="${title}" width="${CHART_WIDTH}" />`,
-    `</p>`,
-    ``,
-  ];
-  if (caption) lines.splice(1, 0, caption, ``);
-  return lines;
-}
-
-const PALETTE = [
-  "#2563eb", "#16a34a", "#dc2626", "#9333ea", "#ea580c",
-  "#0891b2", "#ca8a04", "#4f46e5", "#0d9488", "#be185d",
-  "#65a30d", "#7c3aed",
-];
-
 function main() {
   const { scorecardPath, outDir } = parseArgs(process.argv);
   const payload = JSON.parse(readFileSync(scorecardPath, "utf8")) as ScorecardPayload;
-  const rows = payload.scorecard.filter((r) => r.strict != null).sort((a, b) => (b.strict ?? 0) - (a.strict ?? 0));
+  const rows = payload.scorecard
+    .filter((r) => r.strict != null)
+    .sort((a, b) => (b.strict ?? 0) - (a.strict ?? 0));
 
   mkdirSync(outDir, { recursive: true });
 
@@ -288,22 +121,19 @@ function main() {
 
   const scatterChart = scatterSvg({
     title: "Quality vs price (trade-off)",
-    xLabel: "IDR per parse ← lebih mahal · lebih murah →",
+    xLabel: "IDR per parse → (cheaper left · more expensive right)",
     yLabel: "Composite score (90–100)",
     yMin: 90,
     yMax: 100,
-    priceMin: minPrice,
-    priceMax: maxPrice,
-    xMetricTicks: idrPriceTicks(minPrice, maxPrice),
-    points: rows.map((r, i) => {
-      const priceIdr = usdToIdr(r.csvCostPerReqUsd ?? 0);
-      return {
-        label: r.modelId,
-        x: maxPrice - priceIdr + minPrice,
-        y: r.composite ?? 0,
-        color: PALETTE[i % PALETTE.length]!,
-      };
-    }),
+    xMetricTicks: idrCostTicks(minPrice, maxPrice),
+    formatXTick: (n) => `Rp\u00a0${Math.round(n)}`,
+    shortLabel: shortName,
+    points: rows.map((r, i) => ({
+      label: r.modelId,
+      x: usdToIdr(r.csvCostPerReqUsd ?? 0),
+      y: r.composite ?? 0,
+      color: PALETTE[i % PALETTE.length]!,
+    })),
   });
 
   const throughputRows = rows.filter((r) => (r.throughputTps ?? 0) > 0);
@@ -326,7 +156,6 @@ function main() {
   writeFileSync(resolve(outDir, "quality-vs-price.svg"), scatterChart);
   writeFileSync(resolve(outDir, "throughput.svg"), throughputChart);
 
-  // Enriched markdown report
   const reportLines = [
     `# Model comparison report`,
     ``,
@@ -335,12 +164,24 @@ function main() {
     ``,
     `## Visual summary`,
     ``,
-    `Charts render at **${CHART_WIDTH}px** width — scroll horizontally on narrow screens if needed.`,
+    `Charts render at **960px** width — scroll horizontally on narrow screens if needed.`,
     ``,
-    ...chartEmbedMd("./charts/strict-pass.svg", "Strict pass rate", "Hard-25 scenarios passed with exact structured match."),
-    ...chartEmbedMd("./charts/cost-25-idr.svg", "Cost per 25-scenario eval run (IDR)", `FX: 1 USD = ${USD_TO_IDR.toLocaleString("id-ID")} IDR`),
+    ...chartEmbedMd(
+      "./charts/strict-pass.svg",
+      "Strict pass rate",
+      "Hard-25 scenarios passed with exact structured match.",
+    ),
+    ...chartEmbedMd(
+      "./charts/cost-25-idr.svg",
+      "Cost per 25-scenario eval run (IDR)",
+      `FX: 1 USD = ${USD_TO_IDR.toLocaleString("id-ID")} IDR`,
+    ),
     ...chartEmbedMd("./charts/latency.svg", "Mean eval latency per scenario"),
-    ...chartEmbedMd("./charts/quality-vs-price.svg", "Quality vs price trade-off", "Ideal quadrant: **top-right** (high composite, cheapest → right). Y-axis zoomed to 90–100."),
+    ...chartEmbedMd(
+      "./charts/quality-vs-price.svg",
+      "Quality vs price trade-off",
+      "Ideal quadrant: **top-left** (high composite, cheaper → left). X-axis: cost ascending. Y-axis zoomed to 90–100.",
+    ),
     ...chartEmbedMd("./charts/throughput.svg", "OpenRouter throughput (tokens/sec)"),
     `## Master table (USD + IDR)`,
     ``,
@@ -356,7 +197,6 @@ function main() {
     );
   }
 
-  const topQ = [...rows].sort((a, b) => (b.strict ?? 0) - (a.strict ?? 0) || (b.composite ?? 0) - (a.composite ?? 0))[0]!;
   const gemma = rows.find((r) => r.modelId === "google/gemma-4-31b-it");
   const fastest = [...rows].sort((a, b) => (a.evalMeanMs ?? 9e9) - (b.evalMeanMs ?? 9e9))[0]!;
   const cheapest21 = [...rows]

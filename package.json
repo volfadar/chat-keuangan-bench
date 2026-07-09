@@ -35,11 +35,12 @@
     "fixtures:receipts": "bun run scripts/generate-receipt-fixtures.ts",
     "studio": "mastra dev --dir src/mastra",
     "report": "bun run scripts/generate-report-assets.ts",
+    "report:rupiah-pro": "bun run scripts/generate-rupiah-pro-charts.ts",
     "analysis": "bun run scripts/generate-hard-25-analysis.ts",
     "bench:refresh": "bun run eval:scorecard && bun run report && bun run analysis",
     "dry-run": "bun run src/core/eval-core.ts --dry-run --limit 5",
     "rescore:agentic-v2": "bun run scripts/score-rupiah-pro.ts",
-    "score:rupiah-pro": "bun run scripts/score-rupiah-pro.ts"
+    "score:rupiah-pro": "bun run scripts/score-rupiah-pro.ts && bun run report:rupiah-pro"
   },
   "dependencies": {
     "@ai-sdk/openai-compatible": "^2.0.47",
