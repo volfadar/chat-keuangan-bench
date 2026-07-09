@@ -1,7 +1,7 @@
 {
   "name": "chat-keuangan-bench",
-  "version": "0.3.2",
-  "description": "Open benchmark for parsing Indonesian casual finance chat (WhatsApp-style) into structured Rupiah transactions via LLMs",
+  "version": "0.8.0",
+  "description": "Open benchmarks for Indonesian casual finance chat \u2014 Parse-25 (single-turn) + Rupiah-Pro (multi-turn agentic)",
   "type": "module",
   "license": "MIT",
   "repository": {
@@ -17,7 +17,10 @@
     "evaluation",
     "whatsapp",
     "openrouter",
-    "structured-extraction"
+    "structured-extraction",
+    "rupiah-pro",
+    "agentic",
+    "ledger"
   ],
   "scripts": {
     "eval": "bun run src/core/eval-core.ts",
@@ -27,20 +30,35 @@
     "eval:scorecard": "bun run scripts/build-finance-model-scorecard.ts",
     "strip-csv": "bun run scripts/strip-openrouter-csv.ts",
     "eval:prompt-tune": "bun run scripts/eval-prompt-tune.ts",
+    "eval:agentic": "bun run scripts/eval-agentic-hard-20.ts",
+    "verify:agentic": "bun run scripts/verify-agentic-harness.ts",
+    "fixtures:receipts": "bun run scripts/generate-receipt-fixtures.ts",
+    "studio": "mastra dev --dir src/mastra",
     "report": "bun run scripts/generate-report-assets.ts",
     "analysis": "bun run scripts/generate-hard-25-analysis.ts",
     "bench:refresh": "bun run eval:scorecard && bun run report && bun run analysis",
-    "dry-run": "bun run src/core/eval-core.ts --dry-run --limit 5"
+    "dry-run": "bun run src/core/eval-core.ts --dry-run --limit 5",
+    "rescore:agentic-v2": "bun run scripts/score-rupiah-pro.ts",
+    "score:rupiah-pro": "bun run scripts/score-rupiah-pro.ts"
   },
   "dependencies": {
     "@ai-sdk/openai-compatible": "^2.0.47",
+    "@mastra/core": "1.50.1",
+    "@mastra/evals": "1.5.1",
+    "@mastra/libsql": "1.15.1",
+    "@mastra/memory": "^1.22.2",
+    "@mastra/observability": "1.16.0",
     "@openrouter/ai-sdk-provider": "^2.9.0",
     "ai": "^6.0.176",
+    "better-sqlite3": "^12.11.1",
     "dotenv": "^16.4.7",
+    "pdf-lib": "^1.17.1",
     "zod": "^3.24.0"
   },
   "devDependencies": {
+    "@types/better-sqlite3": "^7.6.13",
     "@types/bun": "^1.2.0",
+    "mastra": "1.18.2",
     "typescript": "^5.8.0"
   },
   "engines": {

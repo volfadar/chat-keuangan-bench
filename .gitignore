@@ -3,6 +3,23 @@ node_modules/
 .env.local
 *.log
 .DS_Store
+.runs/
 # Large per-run JSON in docs/results/ root (keep runs/ tracked)
 docs/results/2026-*-finance-hard-25-results.json
 !docs/results/runs/
+.mastra/
+.firecrawl/
+scripts/tmp-*.ts
+# Incomplete / invalid local agentic dumps (gpt-oss 429, hy3 no-tools, early smokes)
+docs/results/agentic/2026-07-09-10-*.json
+docs/results/agentic/2026-07-09-10-*.md
+docs/results/agentic/2026-07-09-11-*.json
+docs/results/agentic/2026-07-09-11-*.md
+docs/results/agentic/2026-07-09-12-06-*.json
+docs/results/agentic/2026-07-09-12-06-*.md
+docs/results/agentic/2026-07-09-13-53-54-*
+docs/results/agentic/2026-07-09-14-04-36-*
+docs/results/agentic/2026-07-09-14-51-04-*
+docs/results/agentic/2026-07-09-22-30-04-*
+docs/results/agentic/2026-07-09-23-00-31-agentic-v2-*
+docs/results/agentic/agentic-v2-leaderboard-latest.json

@@ -1,0 +1,101 @@
+{
+  "receipts": [
+    {
+      "file": "nota-indomaret.png",
+      "path": "fixtures/agentic/images/nota-indomaret.png",
+      "vendor": "Indomaret",
+      "total": 87500,
+      "tanggal": "2026-07-02",
+      "items": [
+        {
+          "name": "INDOMIE GORENG 5PCS",
+          "jumlah": 17500
+        },
+        {
+          "name": "TEH BOTOL SOSRO 350ML",
+          "jumlah": 6000
+        },
+        {
+          "name": "BERAS RAMOS 5KG",
+          "jumlah": 64000
+        }
+      ]
+    },
+    {
+      "file": "nota-alfamart.png",
+      "path": "fixtures/agentic/images/nota-alfamart.png",
+      "vendor": "Alfamart",
+      "total": 45200,
+      "tanggal": "2026-07-05",
+      "items": [
+        {
+          "name": "MINYAK GORENG 2L",
+          "jumlah": 38000
+        },
+        {
+          "name": "GULA PASIR 1KG",
+          "jumlah": 7200
+        }
+      ]
+    },
+    {
+      "file": "nota-warung-padang.png",
+      "path": "fixtures/agentic/images/nota-warung-padang.png",
+      "vendor": "Warung Padang Sederhana",
+      "total": 85000,
+      "tanggal": "2026-07-03",
+      "items": [
+        {
+          "name": "NASI PADANG PAKET A",
+          "jumlah": 35000
+        },
+        {
+          "name": "AYAM POP",
+          "jumlah": 28000
+        },
+        {
+          "name": "ES TEH MANIS x2",
+          "jumlah": 16000
+        },
+        {
+          "name": "KERUPUK",
+          "jumlah": 6000
+        }
+      ]
+    },
+    {
+      "file": "nota-spbu-pertamina.png",
+      "path": "fixtures/agentic/images/nota-spbu-pertamina.png",
+      "vendor": "SPBU Pertamina 34.12345",
+      "total": 150000,
+      "tanggal": "2026-07-01",
+      "items": [
+        {
+          "name": "PERTALITE 10.00 L",
+          "jumlah": 150000
+        }
+      ]
+    },
+    {
+      "file": "nota-apotik-kimia-farma.png",
+      "path": "fixtures/agentic/images/nota-apotik-kimia-farma.png",
+      "vendor": "Kimia Farma Apotek",
+      "total": 127500,
+      "tanggal": "2026-06-28",
+      "items": [
+        {
+          "name": "PARACETAMOL 500MG",
+          "jumlah": 18000
+        },
+        {
+          "name": "VITAMIN C 1000MG",
+          "jumlah": 45000
+        },
+        {
+          "name": "MASKER MEDIS BOX",
+          "jumlah": 64500
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,41 @@
+{
+  "searchQuery": "nota indomaret belanja struk thermal",
+  "localCatalog": [
+    {
+      "file": "nota-indomaret.png",
+      "sandboxPath": "in/nota-indomaret.png",
+      "vendor": "Indomaret",
+      "total": 87500,
+      "title": "Struk Indomaret Ciputat 02/07/2026"
+    },
+    {
+      "file": "nota-alfamart.png",
+      "sandboxPath": "in/nota-alfamart.png",
+      "vendor": "Alfamart",
+      "total": 45200,
+      "title": "Struk Alfamart Pondok Aren 05/07/2026"
+    },
+    {
+      "file": "nota-warung-padang.png",
+      "sandboxPath": "in/nota-warung-padang.png",
+      "vendor": "Warung Padang Sederhana",
+      "total": 85000,
+      "title": "Nota Warung Padang Fatmawati 03/07/2026"
+    },
+    {
+      "file": "nota-spbu-pertamina.png",
+      "sandboxPath": "in/nota-spbu-pertamina.png",
+      "vendor": "SPBU Pertamina 34.12345",
+      "total": 150000,
+      "title": "Struk SPBU Pertalite 01/07/2026"
+    },
+    {
+      "file": "nota-apotik-kimia-farma.png",
+      "sandboxPath": "in/nota-apotik-kimia-farma.png",
+      "vendor": "Kimia Farma Apotek",
+      "total": 127500,
+      "title": "Struk Kimia Farma Bintaro 28/06/2026"
+    }
+  ],
+  "note": "Bench uses local Indonesian thermal-receipt PNGs (fixtures/agentic/images/). No Unsplash stubs."
+}

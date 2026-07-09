@@ -1,0 +1,13 @@
+{
+  "vendor": "Warung Padang Sederhana",
+  "total": 85000,
+  "tanggal": "2026-07-03",
+  "items": [
+    { "name": "NASI PADANG PAKET A", "jumlah": 35000 },
+    { "name": "AYAM POP", "jumlah": 28000 },
+    { "name": "ES TEH MANIS x2", "jumlah": 16000 },
+    { "name": "KERUPUK", "jumlah": 6000 }
+  ],
+  "matchedImage": "nota-warung-padang.png",
+  "note": "OCR from warung nota (85000) intentionally differs from CSV Indomaret 87500 — agent must surface conflict"
+}

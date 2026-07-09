@@ -1,0 +1,14 @@
+tanggal,keterangan,jumlah,arah,org_hint,catatan
+2026-07-01,Infaq Jumat box,3200000,pemasukan,yayasan,kas masjid
+2026-07-01,Donasi orang tua murid,1500000,pemasukan,sekolah,bukan yayasan
+2026-07-02,ATK fotokopi,-185000,pengeluaran,yayasan,
+2026-07-02,Konsumsi rapat dewan,-275000,pengeluaran,yayasan,
+2026-07-03,SPP subsidi Juli,-750000,pengeluaran,sekolah,bukan yayasan
+2026-07-03,Transfer vendor renovasi atap,-18000000,pengeluaran,yayasan,NO_RECEIPT
+2026-07-04,Biaya admin transfer,-6500,pengeluaran,yayasan,
+2026-07-04,Gaji bendahara pribadi,0,skip,personal,JANGAN IMPORT — bukan kas yayasan
+2026-07-05,Pembelian laptop staf,-9000000,pengeluaran,sekolah,kemungkinan salah org
+2026-07-05,TRSF antar rekening yayasan,-2000000,internal,yayasan,pindah kas
+2026-07-05,TRSF antar rekening yayasan,2000000,internal,yayasan,pindah kas
+2026-07-06,Catering weekend pengajian,-1250000,pengeluaran,yayasan,weekend
+2026-07-06,Kimia Farma obat posyandu,-127500,pengeluaran,yayasan,ada nota

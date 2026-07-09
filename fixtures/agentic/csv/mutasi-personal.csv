@@ -1,0 +1,15 @@
+tanggal,keterangan,jumlah,arah,catatan
+2026-07-01,TRSF dari BCA sendiri,-750000,internal,pindah ke dompet
+2026-07-01,TRSF ke BCA sendiri,750000,internal,dari dompet
+2026-07-02,Gaji PT Nusantara,8500000,pemasukan,payroll
+2026-07-02,Indomaret Ciputat,-87500,pengeluaran,QRIS
+2026-07-03,PLN Token rumah,-102500,pengeluaran,
+2026-07-03,Biaya admin transfer,-2500,pengeluaran,
+2026-07-04,Refund Tokopedia Gopay,127000,pemasukan,barang retur
+2026-07-04,GoPay Topup dari BCA,-200000,internal,isi saldo ewallet
+2026-07-05,SPBU Pertamina,-150000,pengeluaran,Flazz
+2026-07-05,Transfer ke rekening istri,-1500000,internal,belanja bulanan rumah
+2026-07-06,Cashback OVO,25000,pemasukan,
+2026-07-06,Alfamart Pondok Aren,-45200,pengeluaran,
+2026-07-07,Bayar WiFi Indihome,-350000,pengeluaran,
+2026-07-08,Tarik tunai ATM,-500000,internal,cash on hand

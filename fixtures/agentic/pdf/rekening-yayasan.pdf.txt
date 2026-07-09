@@ -1,0 +1,12 @@
+REKENING KORAN — YAYASAN MENARA SUNNAH
+Periode: 01-06 Jul 2026
+Mutasi:
+03/07 Transfer vendor renovasi atap Rp 18.000.000 (tanpa nota terlampir)
+03/07 Biaya admin transfer Rp 6.500
+05/07 Debit pembelian laptop staf Rp 9.000.000 (kode unit: SEKOLAH)
+06/07 Debit catering weekend Rp 1.250.000
+Saldo akhir Rp 42.100.000
+CATATAN AUDITOR:
+- Laptop SEKOLAH jangan masuk kas yayasan tanpa reklasifikasi.
+- Transfer 18jt tanpa nota = flag anomali, jangan void otomatis.
+- Admin 6.500 boleh dicatat pengeluaran operasional yayasan.

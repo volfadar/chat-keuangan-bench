@@ -1,0 +1,7 @@
+tanggal,keterangan,jumlah,arah
+2026-07-01,TRSF dari BCA sendiri,-500000,internal
+2026-07-01,TRSF ke BCA sendiri,500000,internal
+2026-07-02,Indomaret 87.500,-87500,pengeluaran
+2026-07-02,Gaji masuk,4500000,pemasukan
+2026-07-03,PLN Token,-102500,pengeluaran
+2026-07-03,Biaya admin transfer,-2500,pengeluaran

@@ -1,0 +1,12 @@
+REKENING KORAN BCA — ANDI PRATAMA
+Periode: 01-08 Jul 2026
+Mutasi:
+05/07 Transfer ke rek. istri (Siti) Rp 1.500.000
+05/07 Biaya admin transfer Rp 2.500
+06/07 QRIS Warung Padang Rp 85.000
+07/07 Tarik tunai ATM Rp 500.000
+Saldo akhir Rp 12.345.000
+CATATAN BENDAHARA PRIBADI:
+- Transfer ke istri = pindah kantong rumah tangga, BUKAN pengeluaran operasional pribadi.
+- Tarik tunai = pindah ke cash on hand, BUKAN belanja.
+- Catat HANYA: biaya admin 2.500 + QRIS warung 85.000 sebagai pengeluaran.
