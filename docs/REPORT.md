@@ -57,6 +57,7 @@ Ideal quadrant: **top-left** (high composite, cheaper → left). X-axis: cost as
 | deepseek-v4-pro | 22/25 | 97 | 2404ms | $0.0162 | Rp 291 | $0.00065 | Rp 12 |
 | gpt-oss-120b | 21/25 | 96 | 1253ms | $0.0070 | Rp 126 | $0.00028 | Rp 5 |
 | deepseek-v4-flash | 21/25 | 97 | 2385ms | $0.0028 | Rp 50 | $0.00011 | Rp 2 |
+| qwen3.6-35b-a3b | 20/25 | 81 | 1837ms | $0.0086 | Rp 155 | $0.00035 | Rp 6 |
 | deepseek-v4-pro (OR) | 19/25 | 94 | 2828ms | $0.0217 | Rp 388 | $0.00087 | Rp 16 |
 | glm-4.7-flash | 17/25 | 92 | 2745ms | $0.0022 | Rp 39 | $0.00009 | Rp 2 |
 | nemotron-3-nano-30b-a3b | 15/25 | 90 | 2791ms | $0.0026 | Rp 46 | $0.00010 | Rp 2 |

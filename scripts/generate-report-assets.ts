@@ -122,8 +122,8 @@ function main() {
   const scatterChart = scatterSvg({
     title: "Quality vs price (trade-off)",
     xLabel: "IDR per parse → (cheaper left · more expensive right)",
-    yLabel: "Composite score (90–100)",
-    yMin: 90,
+    yLabel: "Composite score (80–100, fixed)",
+    yMin: 80,
     yMax: 100,
     xMetricTicks: idrCostTicks(minPrice, maxPrice),
     formatXTick: (n) => `Rp\u00a0${Math.round(n)}`,
