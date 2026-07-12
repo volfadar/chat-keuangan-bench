@@ -46,22 +46,22 @@
     <text x="807.423197492163" y="94.59199999999993" text-anchor="middle" class="dot-label">gemini-3-flash-preview</text>
     <circle cx="231.8746081504702" cy="94.64000000000004" r="9" fill="#dc2626" opacity="0.85"/>
     <text x="231.8746081504702" y="116.64000000000004" text-anchor="middle" class="dot-label">gemma-4-31b-it</text>
-    <circle cx="295.8244514106583" cy="97.18399999999986" r="9" fill="#9333ea" opacity="0.85"/>
+    <circle cx="391.7492163009404" cy="78.5279999999999" r="9" fill="#9333ea" opacity="0.85"/>
+    <text x="391.7492163009404" y="100.5279999999999" text-anchor="middle" class="dot-label">qwen3.6-35b-a3b</text>
+    <circle cx="295.8244514106583" cy="97.18399999999986" r="9" fill="#ea580c" opacity="0.85"/>
     <text x="295.8244514106583" y="119.18399999999986" text-anchor="middle" class="dot-label">glm-4.5</text>
-    <circle cx="295.8244514106583" cy="116.68799999999987" r="9" fill="#ea580c" opacity="0.85"/>
+    <circle cx="295.8244514106583" cy="116.68799999999987" r="9" fill="#0891b2" opacity="0.85"/>
     <text x="295.8244514106583" y="138.68799999999987" text-anchor="middle" class="dot-label">glm-4.7</text>
-    <circle cx="231.8746081504702" cy="168.41600000000017" r="9" fill="#0891b2" opacity="0.85"/>
+    <circle cx="231.8746081504702" cy="168.41600000000017" r="9" fill="#ca8a04" opacity="0.85"/>
     <text x="231.8746081504702" y="190.41600000000017" text-anchor="middle" class="dot-label">ling-2.6-1t</text>
-    <circle cx="199.89968652037618" cy="111.60000000000002" r="9" fill="#ca8a04" opacity="0.85"/>
+    <circle cx="199.89968652037618" cy="111.60000000000002" r="9" fill="#4f46e5" opacity="0.85"/>
     <text x="199.89968652037618" y="133.60000000000002" text-anchor="middle" class="dot-label">mimo-v2.5-pro</text>
-    <circle cx="455.69905956112854" cy="111.60000000000002" r="9" fill="#4f46e5" opacity="0.85"/>
+    <circle cx="455.69905956112854" cy="111.60000000000002" r="9" fill="#0d9488" opacity="0.85"/>
     <text x="455.69905956112854" y="133.60000000000002" text-anchor="middle" class="dot-label">deepseek-v4-pro</text>
-    <circle cx="231.8746081504702" cy="126.01600000000019" r="9" fill="#0d9488" opacity="0.85"/>
+    <circle cx="231.8746081504702" cy="126.01600000000019" r="9" fill="#be185d" opacity="0.85"/>
     <text x="231.8746081504702" y="148.0160000000002" text-anchor="middle" class="dot-label">gpt-oss-120b</text>
-    <circle cx="135.9498432601881" cy="107.35999999999996" r="9" fill="#be185d" opacity="0.85"/>
+    <circle cx="135.9498432601881" cy="107.35999999999996" r="9" fill="#65a30d" opacity="0.85"/>
     <text x="135.9498432601881" y="129.35999999999996" text-anchor="middle" class="dot-label">deepseek-v4-flash</text>
-    <circle cx="263.84952978056424" cy="444.44000000000005" r="9" fill="#65a30d" opacity="0.85"/>
-    <text x="263.84952978056424" y="466.44000000000005" text-anchor="middle" class="dot-label">qwen3.6-35b-a3b</text>
     <circle cx="583.5987460815047" cy="175.20000000000005" r="9" fill="#7c3aed" opacity="0.85"/>
     <text x="583.5987460815047" y="197.20000000000005" text-anchor="middle" class="dot-label">deepseek-v4-pro (OR)</text>
     <circle cx="135.9498432601881" cy="217.60000000000002" r="9" fill="#2563eb" opacity="0.85"/>

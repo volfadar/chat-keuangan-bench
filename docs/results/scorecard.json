@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-07-12T07:21:04.533Z",
+  "generatedAt": "2026-07-12T09:39:17.344Z",
   "csvPath": "/root/rupiah-bench/docs/data/openrouter_activity_2026-06-26.csv",
   "evalSources": [
     "/root/rupiah-bench/docs/results/2026-06-26-finance-hard-25-results.json",
@@ -208,18 +208,18 @@
     {
       "modelId": "qwen/qwen3.6-35b-a3b",
       "inEval": true,
-      "strict": 20,
-      "composite": 81.3,
-      "evalMeanMs": 1837,
-      "csvAvgGenMs": 1837,
+      "strict": 24,
+      "composite": 98.56,
+      "evalMeanMs": 4606,
+      "csvAvgGenMs": 4606,
       "csvAvgTtftMs": null,
-      "csvCostPerReqUsd": 0.0003455040000000001,
-      "estCost25Usd": 0.008637600000000002,
+      "csvCostPerReqUsd": 0.000531232,
+      "estCost25Usd": 0.0132808,
       "throughputTps": null,
       "valueIndex": null,
-      "tierExcellent": 20,
+      "tierExcellent": 24,
       "errors": 0,
-      "note": "Parse-25 cost from 2026-07-12 AkashML/fp8 det0 matrix (3 repeats); used for Rupiah-Pro quadrant"
+      "note": "Parse-25 hard-25 composite winner 2026-07-12: SiliconFlow/fp8 + mild (temp=0.3,top_p=0.9,top_k=40)"
     }
   ],
   "csvStats": {

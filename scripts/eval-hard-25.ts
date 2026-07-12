@@ -357,7 +357,7 @@ export const HARD_SCENARIOS: HardScenario[] = [
 
 type QualityTier = "excellent" | "usable_with_edit" | "partially_usable" | "misleading" | "broken";
 
-interface QualityAnalysis {
+export interface QualityAnalysis {
   strictPass: boolean;
   strictAltPass: boolean;
   scores: {
@@ -520,7 +520,7 @@ function detectPriceCopy(parsed: ParsedFinance, scenario: HardScenario): boolean
   return false;
 }
 
-function analyzeQuality(parsed: ParsedFinance, scenario: HardScenario): QualityAnalysis {
+export function analyzeQuality(parsed: ParsedFinance, scenario: HardScenario): QualityAnalysis {
   const strict = scoreExtraction(parsed, scenario);
   const strictAltPass = !strict.pass && applyAltStrict(scenario, parsed);
   const strictPass = strict.pass || strictAltPass;
