@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-07-12T07:38:34.783Z",
+  "generatedAt": "2026-07-12T09:23:29.873Z",
   "fxUsdToIdr": 17905,
   "publicCostAxis": {
     "metric": "csvCostPerReqUsd from docs/results/scorecard.json (Parse-25 OpenRouter activity)",
@@ -14,17 +14,6 @@
     ]
   },
   "models": [
-    {
-      "modelId": "google/gemini-3-flash-preview",
-      "score": 89,
-      "meanMs": 57138,
-      "unitCostUsd": 0.0012702448979591838,
-      "unitCostIdr": 23,
-      "estCost25Usd": 0.031756122448979594,
-      "costMethod": "scorecard_csv_unit_price",
-      "suiteBurnUsdAudit": 0.19967209716767026,
-      "suiteBurnMethod": "wall_share_of_batch:2026-07-09T13-47-17"
-    },
     {
       "modelId": "google/gemini-3.1-flash-lite",
       "score": 88.1,

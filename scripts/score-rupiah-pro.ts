@@ -51,10 +51,8 @@ const REPORTS: Array<{ label: string; path: string }> = [
     label: "xiaomi/mimo-v2.5-pro",
     path: "docs/results/agentic/2026-07-09-14-02-36-agentic-suite.json",
   },
-  {
-    label: "google/gemini-3-flash-preview",
-    path: "docs/results/agentic/2026-07-09-13-56-36-agentic-suite.json",
-  },
+  // Culled from public Rupiah-Pro board: ~Rp 23/req outlier; keeps cost charts readable.
+  // Trace retained: docs/results/agentic/2026-07-09-13-56-36-agentic-suite.json
   {
     label: "z-ai/glm-4.7",
     path: "docs/results/agentic/2026-07-09-13-58-21-agentic-suite.json",
@@ -288,6 +286,7 @@ function main() {
     `- Headline suite: **${DISCRIMINATIVE_IDS.length} discriminative scenarios**`,
     `- Rubric + step collected at run time for audit, **not** in the public average`,
     `- Offline rescore from existing traces — no re-run required`,
+    `- Culled from public board: \`google/gemini-3-flash-preview\` (unit-price outlier ~Rp 23/req)`,
     ``,
     `## Leaderboard`,
     ``,

@@ -1,6 +1,6 @@
 # Rupiah-Pro charts
 
-Generated: 2026-07-12T07:38:34.783Z
+Generated: 2026-07-12T09:23:29.873Z
 
 Same visual language as Parse-25. Cost X-axis: **cheaper left → expensive right**; ideal quadrant **top-left**.
 
@@ -42,7 +42,6 @@ Ideal quadrant: **top-left** (high score, cheaper → left).
 
 | Model | Score | Mean latency | IDR/req | $/25-parse |
 |-------|------:|-------------:|--------:|-----------:|
-| `gemini-3-flash-preview` | 89 | 57s | Rp 23 | $0.0318 |
 | `gemini-3.1-flash-lite` | 88.1 | 43s | Rp 13 | $0.0181 |
 | `mimo-v2.5-pro` | 87.9 | 96s | Rp 4 | $0.0057 |
 | `glm-4.5` | 86.1 | 54s | Rp 7 | $0.0105 |

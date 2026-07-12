@@ -39,7 +39,7 @@ Charts use the same axis convention as Parse-25: **cheap left → expensive righ
 
 ### Why not “legacy raw” (det40+rub25+step25+if10)?
 
-That formula packed almost every model into **~89–98**. Rubric/step were soft; many scenarios always scored 100. Rupiah-Pro v1 opens spread (~**75–89** on the current board) without re-running agents.
+That formula packed almost every model into **~89–98**. Rubric/step were soft; many scenarios always scored 100. Rupiah-Pro v1 opens spread (~**75–88** on the current board) without re-running agents.
 
 Raw run JSON still stores all four components for audit / research.
 

@@ -90,6 +90,9 @@ export function scatterSvg(opts: {
   yLabel: string;
   yMin?: number;
   yMax?: number;
+  /** Fixed X domain (same units as point.x). When set, skips auto-fit from data. */
+  xMin?: number;
+  xMax?: number;
   /** Tick values in the same units as point.x (cost ascending left→right) */
   xTicksTicks?: number[];
   /** Format tick label from numeric cost */
@@ -110,8 +113,10 @@ export function scatterSvg(opts: {
   const dataSpan = dataMaxX - dataMinX || 1;
   const xPadLeft = opts.xPadLeft ?? 0.12;
   const xPadRight = opts.xPadRight ?? 0.12;
-  const displayMinX = Math.max(0, dataMinX - dataSpan * xPadLeft);
-  const displayMaxX = dataMaxX + dataSpan * xPadRight;
+  const displayMinX =
+    opts.xMin != null ? opts.xMin : Math.max(0, dataMinX - dataSpan * xPadLeft);
+  const displayMaxX =
+    opts.xMax != null ? opts.xMax : dataMaxX + dataSpan * xPadRight;
   const displaySpan = displayMaxX - displayMinX || 1;
   const minY = opts.yMin ?? 0;
   const maxY = opts.yMax ?? 100;
