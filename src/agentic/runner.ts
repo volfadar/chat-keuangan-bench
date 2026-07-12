@@ -1,7 +1,7 @@
 import { mkdirSync, writeFileSync } from "node:fs";
 import { resolve } from "node:path";
 import { config } from "dotenv";
-import { createFinanceAgent } from "./agent";
+import { createFinanceAgent, type AgenticSampling } from "./agent";
 import { runDeterministicAsserts, readLedger } from "./asserts";
 import {
   scoreRubric,
@@ -65,6 +65,7 @@ export async function runScenario(opts: {
   modelId: string;
   providerOnly?: string[];
   skipJudge?: boolean;
+  sampling?: AgenticSampling;
 }): Promise<ScenarioRunResult> {
   const t0 = Date.now();
   const sandbox = await createSandbox(opts.scenario.id, {
@@ -79,6 +80,7 @@ export async function runScenario(opts: {
     sandbox,
     providerOnly: opts.providerOnly,
     instructions: buildInstructions(opts.scenario),
+    sampling: opts.sampling,
   });
 
   // Prefill contaminated / prior context into memory (not scored as model output)
@@ -260,6 +262,7 @@ export async function runAgenticSuite(opts: {
   dryRun?: boolean;
   /** Parallel scenario workers (default 4). Set 1 for serial. */
   concurrency?: number;
+  sampling?: AgenticSampling;
 }): Promise<{ results: ScenarioRunResult[]; summary: Record<string, unknown> }> {
   await ensureDefaultFixtures();
   const suite = opts.suite ?? "all";
@@ -311,6 +314,7 @@ export async function runAgenticSuite(opts: {
         modelId: opts.modelId,
         providerOnly: opts.providerOnly,
         skipJudge: opts.skipJudge,
+        sampling: opts.sampling,
       });
       results[idx] = r;
       if (r.error) {
@@ -336,6 +340,8 @@ export async function runAgenticSuite(opts: {
     modelId: opts.modelId,
     suite,
     concurrency,
+    providerOnly: opts.providerOnly ?? null,
+    sampling: opts.sampling ?? { temperature: 0 },
     judge: { model: JUDGE_MODEL_ID, provider: JUDGE_PROVIDER || null, mode: JUDGE_MODE },
     prompt: AGENTIC_PROMPT_STATS,
     scoring: "det40 + rub25 + step25 + ifBench10",

@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-06-27T16:43:14.675Z",
+  "generatedAt": "2026-07-12T07:21:04.533Z",
   "csvPath": "/root/rupiah-bench/docs/data/openrouter_activity_2026-06-26.csv",
   "evalSources": [
     "/root/rupiah-bench/docs/results/2026-06-26-finance-hard-25-results.json",
@@ -204,6 +204,22 @@
       "valueIndex": 7852.09951630836,
       "tierExcellent": 19,
       "errors": 0
+    },
+    {
+      "modelId": "qwen/qwen3.6-35b-a3b",
+      "inEval": true,
+      "strict": 20,
+      "composite": 81.3,
+      "evalMeanMs": 1837,
+      "csvAvgGenMs": 1837,
+      "csvAvgTtftMs": null,
+      "csvCostPerReqUsd": 0.0003455040000000001,
+      "estCost25Usd": 0.008637600000000002,
+      "throughputTps": null,
+      "valueIndex": null,
+      "tierExcellent": 20,
+      "errors": 0,
+      "note": "Parse-25 cost from 2026-07-12 AkashML/fp8 det0 matrix (3 repeats); used for Rupiah-Pro quadrant"
     }
   ],
   "csvStats": {

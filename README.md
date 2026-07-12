@@ -14,7 +14,7 @@ Open benchmarks for **Indonesian casual finance chat** — WhatsApp-style slang,
 | **What** | One-shot parse of a chat message → structured `pemasukan` / `pengeluaran` JSON | Multi-turn agent with tools: ledger, OCR, CSV/PDF, org switch, auditor packs |
 | **Size** | 25 hard scenarios (+ base/stress for regression) | 28 run scenarios; **public score uses 14 discriminative** |
 | **Public score** | Strict pass + composite quality tiers | `100 × (det/40)² × (ifBench/100)` — **v1.0** |
-| **Typical range** | Top models ~21–24/25 | Leaderboard ~**62–89** (not 89–98 mush) |
+| **Typical range** | Top models ~21–24/25 | Leaderboard ~**75–89** (not 89–98 mush) |
 | **Run** | `bun run eval:hard-25` | `bun run eval:agentic` then `bun run score:rupiah-pro` |
 | **Deep dive** | [`docs/REPORT.md`](docs/REPORT.md) · [`docs/FINDINGS.md`](docs/FINDINGS.md) | [`docs/AGENTIC.md`](docs/AGENTIC.md) · [leaderboard](docs/results/agentic/rupiah-pro-leaderboard-latest.md) |
 
@@ -37,12 +37,12 @@ Multi-turn **pencatatan keuangan**: personal + yayasan/sekolah, slang correction
 | 4 | `z-ai/glm-4.5` | **86.1** | 9 | 2 | 3 |
 | 5 | `google/gemma-4-31b-it` | **84.9** | 27 | 2 | 5 |
 | 6 | `z-ai/glm-4.7` | **84.6** | 36 | 3 | 4 |
-| 7 | `inclusionai/ling-2.6-1t` | **82.3** | 9 | 3 | 3 |
-| 8 | `deepseek/deepseek-v4-flash` | **76.0** | 11 | 4 | 6 |
-| 9 | `deepseek/deepseek-v4-pro` | **75.0** | 16 | 4 | 6 |
-| 10 | `qwen/qwen3.6-35b-a3b` | **62.2** | 0 | 7 | 7 |
+| 7 | `qwen/qwen3.6-35b-a3b` | **84.6** | 0 | 2 | 3 |
+| 8 | `inclusionai/ling-2.6-1t` | **82.3** | 9 | 3 | 3 |
+| 9 | `deepseek/deepseek-v4-flash` | **76.0** | 11 | 4 | 6 |
+| 10 | `deepseek/deepseek-v4-pro` | **75.0** | 16 | 4 | 6 |
 
-**Spread:** 26.8 points · **n = 14** discriminative scenarios · full table: [`rupiah-pro-leaderboard-latest.md`](docs/results/agentic/rupiah-pro-leaderboard-latest.md)
+**Spread:** 14.0 points · **n = 14** discriminative scenarios · full table: [`rupiah-pro-leaderboard-latest.md`](docs/results/agentic/rupiah-pro-leaderboard-latest.md)
 
 <p align="center">
   <img src="./docs/charts/rupiah-pro/quality-vs-price.svg" alt="Rupiah-Pro quality vs suite cost" width="720" />

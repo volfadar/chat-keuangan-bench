@@ -23,9 +23,9 @@
   <text x="492" y="460" class="quad-label">Avoid · low quality · high cost</text>
   
     <line x1="72" y1="472" x2="888" y2="472" stroke="#cbd5e1" stroke-dasharray="3 3" opacity="0.6"/>
-    <text x="64" y="476" text-anchor="end" class="tick">55</text>
+    <text x="64" y="476" text-anchor="end" class="tick">70</text>
     <line x1="72" y1="260" x2="888" y2="260" stroke="#cbd5e1" stroke-dasharray="3 3" opacity="0.6"/>
-    <text x="64" y="264" text-anchor="end" class="tick">78</text>
+    <text x="64" y="264" text-anchor="end" class="tick">85</text>
     <line x1="72" y1="48" x2="888" y2="48" stroke="#cbd5e1" stroke-dasharray="3 3" opacity="0.6"/>
     <text x="64" y="52" text-anchor="end" class="tick">100</text>
   
@@ -38,24 +38,26 @@
   <line x1="72" y1="472" x2="888" y2="472" stroke="#cbd5e1"/>
   <line x1="72" y1="48" x2="72" y2="472" stroke="#cbd5e1"/>
   <text x="480" y="550" text-anchor="middle" class="axis">IDR / request → (cheaper left · more expensive right)</text>
-  <text x="18" y="260" transform="rotate(-90 18 260)" text-anchor="middle" class="axis">Rupiah-Pro score (55–100)</text>
+  <text x="18" y="260" transform="rotate(-90 18 260)" text-anchor="middle" class="axis">Rupiah-Pro score (70–100)</text>
   
-    <circle cx="807.423197492163" cy="151.64444444444445" r="9" fill="#2563eb" opacity="0.85"/>
-    <text x="807.423197492163" y="173.64444444444445" text-anchor="middle" class="dot-label">gemini-3-flash-preview</text>
-    <circle cx="487.6739811912226" cy="160.12444444444452" r="9" fill="#16a34a" opacity="0.85"/>
-    <text x="487.6739811912226" y="182.12444444444452" text-anchor="middle" class="dot-label">gemini-3.1-flash-lite</text>
-    <circle cx="199.89968652037618" cy="162.0088888888888" r="9" fill="#dc2626" opacity="0.85"/>
-    <text x="199.89968652037618" y="184.0088888888888" text-anchor="middle" class="dot-label">mimo-v2.5-pro</text>
-    <circle cx="295.8244514106583" cy="178.96888888888896" r="9" fill="#9333ea" opacity="0.85"/>
-    <text x="295.8244514106583" y="200.96888888888896" text-anchor="middle" class="dot-label">glm-4.5</text>
-    <circle cx="231.8746081504702" cy="190.27555555555546" r="9" fill="#ea580c" opacity="0.85"/>
-    <text x="231.8746081504702" y="212.27555555555546" text-anchor="middle" class="dot-label">gemma-4-31b-it</text>
-    <circle cx="295.8244514106583" cy="193.10222222222228" r="9" fill="#0891b2" opacity="0.85"/>
-    <text x="295.8244514106583" y="215.10222222222228" text-anchor="middle" class="dot-label">glm-4.7</text>
-    <circle cx="231.8746081504702" cy="214.77333333333337" r="9" fill="#ca8a04" opacity="0.85"/>
-    <text x="231.8746081504702" y="236.77333333333337" text-anchor="middle" class="dot-label">ling-2.6-1t</text>
-    <circle cx="135.9498432601881" cy="274.1333333333333" r="9" fill="#4f46e5" opacity="0.85"/>
-    <text x="135.9498432601881" y="296.1333333333333" text-anchor="middle" class="dot-label">deepseek-v4-flash</text>
-    <circle cx="455.69905956112854" cy="283.55555555555554" r="9" fill="#0d9488" opacity="0.85"/>
-    <text x="455.69905956112854" y="305.55555555555554" text-anchor="middle" class="dot-label">deepseek-v4-pro</text>
+    <circle cx="807.423197492163" cy="203.4666666666667" r="9" fill="#2563eb" opacity="0.85"/>
+    <text x="807.423197492163" y="225.4666666666667" text-anchor="middle" class="dot-label">gemini-3-flash-preview</text>
+    <circle cx="487.6739811912226" cy="216.18666666666672" r="9" fill="#16a34a" opacity="0.85"/>
+    <text x="487.6739811912226" y="238.18666666666672" text-anchor="middle" class="dot-label">gemini-3.1-flash-lite</text>
+    <circle cx="199.89968652037618" cy="219.01333333333324" r="9" fill="#dc2626" opacity="0.85"/>
+    <text x="199.89968652037618" y="241.01333333333324" text-anchor="middle" class="dot-label">mimo-v2.5-pro</text>
+    <circle cx="295.8244514106583" cy="244.4533333333334" r="9" fill="#9333ea" opacity="0.85"/>
+    <text x="295.8244514106583" y="266.4533333333334" text-anchor="middle" class="dot-label">glm-4.5</text>
+    <circle cx="231.8746081504702" cy="261.41333333333324" r="9" fill="#ea580c" opacity="0.85"/>
+    <text x="231.8746081504702" y="283.41333333333324" text-anchor="middle" class="dot-label">gemma-4-31b-it</text>
+    <circle cx="295.8244514106583" cy="265.6533333333334" r="9" fill="#0891b2" opacity="0.85"/>
+    <text x="295.8244514106583" y="287.6533333333334" text-anchor="middle" class="dot-label">glm-4.7</text>
+    <circle cx="263.84952978056424" cy="265.6533333333334" r="9" fill="#ca8a04" opacity="0.85"/>
+    <text x="263.84952978056424" y="287.6533333333334" text-anchor="middle" class="dot-label">qwen3.6-35b-a3b</text>
+    <circle cx="231.8746081504702" cy="298.16" r="9" fill="#4f46e5" opacity="0.85"/>
+    <text x="231.8746081504702" y="320.16" text-anchor="middle" class="dot-label">ling-2.6-1t</text>
+    <circle cx="135.9498432601881" cy="387.2" r="9" fill="#0d9488" opacity="0.85"/>
+    <text x="135.9498432601881" y="409.2" text-anchor="middle" class="dot-label">deepseek-v4-flash</text>
+    <circle cx="455.69905956112854" cy="401.33333333333337" r="9" fill="#be185d" opacity="0.85"/>
+    <text x="455.69905956112854" y="423.33333333333337" text-anchor="middle" class="dot-label">deepseek-v4-pro</text>
 </svg>

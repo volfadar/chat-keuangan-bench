@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-07-09T23:44:25.045Z",
+  "generatedAt": "2026-07-12T07:21:14.907Z",
   "fxUsdToIdr": 17905,
   "publicCostAxis": {
     "metric": "csvCostPerReqUsd from docs/results/scorecard.json (Parse-25 OpenRouter activity)",
@@ -78,6 +78,17 @@
       "estCost25Usd": 0.00922927215189873,
       "costMethod": "scorecard_csv_unit_price",
       "suiteBurnUsdAudit": 0.23714350002020065,
+      "suiteBurnMethod": "wall_share_of_batch:2026-07-09T13-47-17"
+    },
+    {
+      "modelId": "qwen/qwen3.6-35b-a3b",
+      "score": 84.6,
+      "meanMs": 52442,
+      "unitCostUsd": 0.0003455040000000001,
+      "unitCostIdr": 6,
+      "estCost25Usd": 0.008637600000000002,
+      "costMethod": "scorecard_csv_unit_price",
+      "suiteBurnUsdAudit": 0.2103171503868468,
       "suiteBurnMethod": "wall_share_of_batch:2026-07-09T13-47-17"
     },
     {

@@ -65,7 +65,8 @@ const REPORTS: Array<{ label: string; path: string }> = [
   },
   {
     label: "qwen/qwen3.6-35b-a3b",
-    path: "docs/results/agentic/2026-07-09-13-57-05-agentic-suite.json",
+    // AkashML/fp8 + det0 (temp=0) — best of 2026-07-12 provider/config matrix (84.6 vs prior 62.2)
+    path: "docs/results/agentic/2026-07-12-07-08-30-agentic-suite.json",
   },
   {
     label: "google/gemini-3.1-flash-lite",

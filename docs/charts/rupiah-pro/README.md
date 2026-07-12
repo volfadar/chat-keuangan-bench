@@ -1,6 +1,6 @@
 # Rupiah-Pro charts
 
-Generated: 2026-07-09T23:44:25.045Z
+Generated: 2026-07-12T07:21:14.907Z
 
 Same visual language as Parse-25. Cost X-axis: **cheaper left → expensive right**; ideal quadrant **top-left**.
 
@@ -48,7 +48,7 @@ Ideal quadrant: **top-left** (high score, cheaper → left).
 | `glm-4.5` | 86.1 | 54s | Rp 7 | $0.0105 |
 | `gemma-4-31b-it` | 84.9 | 79s | Rp 5 | $0.0064 |
 | `glm-4.7` | 84.6 | 66s | Rp 7 | $0.0092 |
+| `qwen3.6-35b-a3b` | 84.6 | 52s | Rp 6 | $0.0086 |
 | `ling-2.6-1t` | 82.3 | 51s | Rp 5 | $0.0065 |
 | `deepseek-v4-flash` | 76 | 58s | Rp 2 | $0.0028 |
 | `deepseek-v4-pro` | 75 | 62s | Rp 12 | $0.0162 |
-| `qwen3.6-35b-a3b` | 62.2 | 60s | — | — |

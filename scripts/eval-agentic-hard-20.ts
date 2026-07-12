@@ -8,9 +8,24 @@
  *
  *   bun run scripts/eval-agentic-hard-20.ts --model google/gemma-4-31b-it --suite hardplus
  *   bun run scripts/eval-agentic-hard-20.ts --dry-run --suite all
+ *   bun run scripts/eval-agentic-hard-20.ts --model qwen/qwen3.6-35b-a3b --provider akashml/fp8 --sampling det0
  */
 
 import { runAgenticSuite, writeAgenticReport } from "../src/agentic/runner";
+import type { AgenticSampling } from "../src/agentic/agent";
+
+const SAMPLING_PRESETS: Record<string, AgenticSampling> = {
+  det0: { temperature: 0 },
+  mild: { temperature: 0.3, top_p: 0.9, top_k: 40 },
+  friend: {
+    temperature: 1.0,
+    top_p: 0.95,
+    top_k: 20,
+    min_p: 0.0,
+    presence_penalty: 1.5,
+    repetition_penalty: 1.0,
+  },
+};
 
 function parseArgs(argv: string[]) {
   let model = "google/gemma-4-31b-it";
@@ -20,6 +35,7 @@ function parseArgs(argv: string[]) {
   let provider: string | undefined;
   let suite: "hard" | "hardplus" | "all" = "all";
   let concurrency = 4;
+  let samplingPreset: string | undefined;
   const ids: string[] = [];
 
   for (let i = 2; i < argv.length; i++) {
@@ -30,6 +46,7 @@ function parseArgs(argv: string[]) {
     else if (a === "--skip-judge") skipJudge = true;
     else if (a === "--provider" && argv[i + 1]) provider = argv[++i]!;
     else if (a === "--concurrency" && argv[i + 1]) concurrency = Number(argv[++i]);
+    else if (a === "--sampling" && argv[i + 1]) samplingPreset = argv[++i]!;
     else if (a === "--suite" && argv[i + 1]) {
       const v = argv[++i]!;
       if (v === "hard" || v === "hardplus" || v === "all") suite = v;
@@ -42,7 +59,18 @@ function parseArgs(argv: string[]) {
       );
     }
   }
-  return { model, limit, dryRun, skipJudge, provider, ids, suite, concurrency };
+
+  let sampling: AgenticSampling | undefined;
+  if (samplingPreset) {
+    sampling = SAMPLING_PRESETS[samplingPreset];
+    if (!sampling) {
+      throw new Error(
+        `Unknown --sampling ${samplingPreset}. Use: ${Object.keys(SAMPLING_PRESETS).join(", ")}`,
+      );
+    }
+  }
+
+  return { model, limit, dryRun, skipJudge, provider, ids, suite, concurrency, sampling, samplingPreset };
 }
 
 async function main() {
@@ -56,13 +84,18 @@ async function main() {
     skipJudge: args.skipJudge,
     dryRun: args.dryRun,
     concurrency: args.concurrency,
+    sampling: args.sampling,
   });
 
   if (args.dryRun) return;
 
-  const { jsonPath, mdPath } = writeAgenticReport(results, summary);
+  const enriched = {
+    ...summary,
+    samplingPreset: args.samplingPreset ?? "det0",
+  };
+  const { jsonPath, mdPath } = writeAgenticReport(results, enriched);
   console.log("\n=== SUMMARY ===");
-  console.log(JSON.stringify(summary, null, 2));
+  console.log(JSON.stringify(enriched, null, 2));
   console.log(`\nJSON: ${jsonPath}`);
   console.log(`MD:   ${mdPath}`);
 }

@@ -1,6 +1,6 @@
 # Rupiah-Pro Leaderboard (v1.0.0)
 
-Generated: 2026-07-12T07:32:56.688Z
+Generated: 2026-07-12T07:21:14.700Z
 
 Multi-turn Indonesian **pencatatan keuangan** agent bench — tools, ledger asserts, org isolation, OCR/mutasi/auditor flows.
 
