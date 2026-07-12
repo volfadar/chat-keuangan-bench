@@ -256,13 +256,16 @@ function main() {
 
   const minIdr = Math.min(...costs.map((c) => c.unitCostIdr));
   const maxIdr = Math.max(...costs.map((c) => c.unitCostIdr));
-  const yMin = Math.max(0, Math.floor(Math.min(...timings.map((c) => c.score)) / 5) * 5 - 5);
+
+  // Fixed Y axis so leaderboard updates don't rescale the quadrant (was
+  // auto-fitting to min score → jumped from ~55 to 70 when Qwen rose to 84.6).
+  const yMin = 60;
   const yMax = 100;
 
   const scatterChart = scatterSvg({
     title: "Rupiah-Pro: quality vs unit price",
     xLabel: "IDR / request → (cheaper left · more expensive right)",
-    yLabel: `Rupiah-Pro score (${yMin}–${yMax})`,
+    yLabel: `Rupiah-Pro score (${yMin}–${yMax}, fixed)`,
     yMin,
     yMax,
     xMetricTicks: idrCostTicks(minIdr, maxIdr),

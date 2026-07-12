@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-07-12T07:21:14.907Z",
+  "generatedAt": "2026-07-12T07:38:34.783Z",
   "fxUsdToIdr": 17905,
   "publicCostAxis": {
     "metric": "csvCostPerReqUsd from docs/results/scorecard.json (Parse-25 OpenRouter activity)",

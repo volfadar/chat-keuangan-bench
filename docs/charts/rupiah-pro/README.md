@@ -1,6 +1,6 @@
 # Rupiah-Pro charts
 
-Generated: 2026-07-12T07:21:14.907Z
+Generated: 2026-07-12T07:38:34.783Z
 
 Same visual language as Parse-25. Cost X-axis: **cheaper left → expensive right**; ideal quadrant **top-left**.
 
